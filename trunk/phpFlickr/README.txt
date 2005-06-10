@@ -1,4 +1,4 @@
-phpFlickr Class 2.0 pre-alpha
+phpFlickr Class 1.1
 Written by Dan Coulter (dan@dancoulter.com)
 Sourceforge Project Page: http://www.sourceforge.net/projects/phpflickr/
 Released under GNU General Public License (http://www.gnu.org/copyleft/gpl.html)
