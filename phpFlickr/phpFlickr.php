@@ -1,5 +1,5 @@
 <?php
-/* phpFlickr Class 1.1
+/* phpFlickr Class 1.2
  * Written by Dan Coulter (dan@dancoulter.com)
  * Sourceforge Project Page: http://www.sourceforge.net/projects/phpflickr/
  * Released under GNU General Public License (http://www.gnu.org/copyleft/gpl.html)
@@ -313,7 +313,7 @@ class phpFlickr {
         return $this->parsed_response['rsp']["groups"]["group"];
     }
     
-    function groups_pools_getPhotos ($group_id, $tags = NULL, $extras = NULL, $per_page = NULL, $page) {
+    function groups_pools_getPhotos ($group_id, $tags = NULL, $extras = NULL, $per_page = NULL, $page = NULL) {
     /* http://www.flickr.com/services/api/flickr.groups.pools.getPhotos.html */
         if (is_array($extras)) {
             $extras = implode(",", $extras);
