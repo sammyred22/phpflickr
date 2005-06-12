@@ -4,11 +4,11 @@
  * Sourceforge Project Page: http://www.sourceforge.net/projects/phpflickr/
  * Released under GNU General Public License (http://www.gnu.org/copyleft/gpl.html)
  * For more information about the class and upcoming tools and toys using it,
- * visit http://phpflickr.sourceforge.net or http://www.dancoulter.com/
+ * visit http://www.phpflickr.com/ or http://phpflickr.sourceforge.net
  *
  *     For installation instructions, open the README.txt file packaged with this
  *     class. If you don't have a copy, you can see it at:
- *     http://phpflickr.sourceforge.net/README.txt
+ *     http://www.phpflickr.com/README.txt
  *
  *     Please submit all problems or questions to the Help Forum on my project page:
  *         http://sourceforge.net/forum/forum.php?forum_id=469652
