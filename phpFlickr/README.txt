@@ -1,16 +1,19 @@
-phpFlickr Class 1.1
+phpFlickr Class 1.2
 Written by Dan Coulter (dan@dancoulter.com)
+Project Homepage: http://www.phpflickr.com/
 Sourceforge Project Page: http://www.sourceforge.net/projects/phpflickr/
 Released under GNU General Public License (http://www.gnu.org/copyleft/gpl.html)
 For more information about the class and upcoming tools and toys using it,
-visit http://phpflickr.sourceforge.net or http://www.dancoulter.com/
+visit http://www.phpflickr.com or http://www.sourceforge.net/projects/phpflickr/
 
 Installation instructions:
-1.  Be sure to have the PEAR prereqs installed, namely HTTP_Response, PHPUnit and DB.  
-    If you have PEAR installed on your *nix server, you can run pear install <package>
-    from the command line.  The XML class I used requires PHPUnit as well.  You can find
-    much more information and documentation at http://pear.php.net/.  You can get
-    detailed installation instructions there.
+1.  Be sure to have these PEAR prereqs installed:
+        HTTP_Response
+        PHPUnit
+        DB
+    If you have PEAR installed on your *nix server, you can run "pear install <package>"
+    from the command line.  You can find much more information and documentation
+    at http://pear.php.net/.  You can get detailed installation instructions there.
     
 2.  Copy xml.php and phpFlickr.php into the same folder on your server.  They need to
     be readible by your web server.  You can put them into an include folder defined
@@ -70,7 +73,22 @@ Using Caching:
         
         <FilesMatch "\.cache$">
             Deny from all
-        </FilesMatch>d
+        </FilesMatch>
+        
+        Alternatively, you can specify a directory that is outside of the web server's
+        document root.
+        
+Other Notes:
+    1.  Many of the methods have optional arguments.  For these, I have implemented 
+        them in the same order that the Flickr API documentation lists them. PHP
+        allows for optional arguments in function calls, but if you want to use the
+        third optional argument, you have to fill in the others to the left first.
+        You can use the "NULL" value (without quotes) in the place of an actual
+        argument.  For example:
+        $f->groups_pools_getPhotos($group_id, NULL, NULL, 10);
+        This will get the first ten photos from a specific group's pool.  If you look
+        at the documentation, you will see that there is another argument, "page". I've
+        left it off because it appears after "per_page".
 
 That's it! Enjoy the class.  Check out the project page (listed above) for updates
 and news.  I plan to implement file uploads and functions to aggregate data from
