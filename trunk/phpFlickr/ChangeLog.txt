@@ -1,0 +1,24 @@
+---------------------
+phpFlickr - Changelog
+---------------------
+
+Version 1.2
+-----------
+
+2005-06-12 Dan Coulter  <dancoulter@users.sourceforge.net>
+    * phpFlickr.php: Created functions for the new methods: photosets.addPhoto
+      and photosets.removePhoto.  Also fixed some code formatting.
+    * phpFlickr.php: Changed URLs to reflect the new phpflickr.com site.
+    * README.txt: Changed URLs to reflect the new phpflickr.com site and added
+      a few notes about coding.
+    * example.php: Added an example php script.
+          
+2005-06-11 Dan Coulter  <dancoulter@users.sourceforge.net>
+    * phpFlickr.php: Fixed a bug in the definition of groups_pools_getPhotos()
+      that made the fifth parameter not optional.
+      
+Version 1.1
+-----------
+
+2005-06-09 Dan Coulter  <dancoulter@users.sourceforge.net>
+    * phpFlickr.php: Added caching functionality
