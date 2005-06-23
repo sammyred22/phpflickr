@@ -31,15 +31,17 @@ class phpFlickr {
     var $cache_table = null;
     var $cache_dir = null;
     var $cache_expire = null;
+    var $die_on_error;
+    var $error_num;
+    Var $error_msg;
     
     
-    function phpFlickr ($api_key, $email = NULL, $password = NULL) 
+    function phpFlickr ($api_key, $die_on_error = false) 
     {
         //The API Key must be set before any calls can be made.  You can 
         //get your own at http://www.flickr.com/services/api/misc.api_keys.html
         $this->api_key = $api_key;
-        $this->email = $email;
-        $this->password = $password;
+        $this->die_on_error = $die_on_error;
         
         //All calls to the API are done via the POST method using the PEAR::HTTP_Request package.
         require_once "HTTP/Request.php";
@@ -48,6 +50,14 @@ class phpFlickr {
         
         //setup XML parser using Aaron Colflesh's XML class.
         $this->xml_parser = new xml(false, true, true);
+    }
+    
+    function login($email = NULL, $password = NULL)
+    {
+        //Sets login information and tests the login.
+        $this->email = $email;
+        $this->password = $password;
+        return $this->test_login();
     }
     
     function enableCache($type, $connection, $cache_expire = 600, $table = "flickr_cache") 
@@ -165,11 +175,30 @@ class phpFlickr {
         $this->parsed_response = $this->xml_parser->parse($xml);
         
         //Check for an error and die if it finds one.
-        if (!empty($this->parsed_response['rsp']['err'])) {
+        if (!empty($this->parsed_response['rsp']['err']) && $this->die_on_error) {
             die("The Flickr API returned error code #" . $this->parsed_response['rsp']['err']['code'] . ": " . $this->parsed_response['rsp']['err']['msg']);
+        } elseif (!empty($this->parsed_response['rsp']['err'])) {
+			$this->error_code = $this->parsed_response['rsp']['err']['code'];
+			$this->error_msg = "The Flickr API returned error code #" . $this->parsed_response['rsp']['err']['code'] . ": " . $this->parsed_response['rsp']['err']['msg'];
+			return false;
+        } else {
+			$this->error_code = false;
+			$this->error_msg = false;
         }
         
         return $this->parsed_response['rsp'];
+    }
+    
+    function getErrorCode() {
+		// Returns the error code of the last call.  If the last call did not
+		// return an error. This will return a false boolean.
+		return $this->error_code();
+    }
+    
+    function getErrorMsg() {
+		// Returns the error message of the last call.  If the last call did not
+		// return an error. This will return a false boolean.
+		return $this->error_code();
     }
     
     /* These functions are front ends for the flickr calls */
