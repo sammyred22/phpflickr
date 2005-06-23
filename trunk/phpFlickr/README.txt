@@ -1,4 +1,4 @@
-phpFlickr Class 1.2
+phpFlickr Class 1.3
 Written by Dan Coulter (dan@dancoulter.com)
 Project Homepage: http://www.phpflickr.com/
 Sourceforge Project Page: http://www.sourceforge.net/projects/phpflickr/
@@ -22,11 +22,18 @@ Installation instructions:
 3.  All you have to do now is include the file in your PHP scripts and create an     
     instance.  For example:
     $f = new phpFlickr("<your API Key>");
+
     The constructor requires your API key as an argument.  If you want to use
     the Flickr API methods that require authentication, you'll need to include your
-    login information as arguments as well (Flickr requires an unencrypted
-    password. For example:
-    $f = new phpFlickr("<your API Key>", "your@email.address", "your password");
+    login information as arguments in the login() function (Flickr requires an unencrypted
+    password, but a new auth scheme is in the works). For example:
+    $f = new phpFlickr("<your API Key>")
+    $f->login("your@email.address", "your password");
+
+    One final note.  The constructor has a second argument.  If you set it to true,
+    all API calls that return an error will cause the script to "die" and echo the
+    error code.  By default, error results will return a false and you can access the 
+    error with the getErrorMsg() method.
 
 4.  All of the API methods have been implemented in my class.  You can see a full list
     and documentation here: http://www.flickr.com/services/api/.  To call a method,
