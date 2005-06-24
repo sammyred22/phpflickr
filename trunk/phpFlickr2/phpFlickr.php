@@ -1,5 +1,5 @@
 <?php
-/* phpFlickr Class 1.2
+/* phpFlickr Class 2.0.0 Pre-alpha
  * Written by Dan Coulter (dan@dancoulter.com)
  * Sourceforge Project Page: http://www.sourceforge.net/projects/phpflickr/
  * Released under GNU General Public License (http://www.gnu.org/copyleft/gpl.html)
@@ -16,6 +16,7 @@
  */
  
 require_once("xml.php");
+require_once("phpFlickrPhoto.php");
 
 class phpFlickr {
     var $api_key;
@@ -231,6 +232,12 @@ class phpFlickr {
         }
         $url .= ".jpg";
         return $url;
+    }
+
+    function getPhoto($photo_id = NULL) {
+		/* Creates a photo object based on a specific photo id. */
+        $result = new phpFlickr_Photo($this, $photo_id);
+        return $result;
     }
     
     /* 
@@ -863,5 +870,14 @@ class phpFlickr {
     }
 }
 
+class phpFlickr_BaseObject {
+    var $flickr;
+    var $data;
+    
+    function phpFlickr_BaseObject(&$phpFlickr, $data = NULL) {
+        $this->flickr =& $phpFlickr;
+        $this->data = $data;
+    }
+}
 
 ?>
