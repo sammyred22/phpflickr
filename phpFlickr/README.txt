@@ -1,4 +1,4 @@
-phpFlickr Class 1.3
+phpFlickr Class 1.2.1
 Written by Dan Coulter (dan@dancoulter.com)
 Project Homepage: http://www.phpflickr.com/
 Sourceforge Project Page: http://www.sourceforge.net/projects/phpflickr/
@@ -45,7 +45,7 @@ Installation instructions:
     documentation page (a link to which is included with each function in the clasS).
     The only exception to this is photos_search() which has so many optional arguments
     that it's easier for everyone around if you just have to pass an associative array
-    of arguments.  See the comment on line whatever for more information.
+    of arguments.  See the comment on line #580 in phpFlickr.php for more information.
 
 Using Caching:
     Caching can be very important to a project.  Just a few calls to the Flickr API
