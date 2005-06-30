@@ -8,7 +8,7 @@ visit http://www.phpflickr.com or http://www.sourceforge.net/projects/phpflickr/
 
 Installation instructions:
 1.  Be sure to have these PEAR prereqs installed:
-        HTTP_Response
+        HTTP_Request
         PHPUnit
         DB
     If you have PEAR installed on your *nix server, you can run "pear install <package>"
@@ -102,7 +102,8 @@ and news.  I plan to implement file uploads and functions to aggregate data from
 several different methods for easier use in a web application.  Thanks for your
 interest in this project!
 
-    Please submit all problems or questions to the Help Forum on my project page:
+    Please email me or submit all problems or questions to the Help Forum on
+    my project page:
         http://sourceforge.net/forum/forum.php?forum_id=469652
 
  
