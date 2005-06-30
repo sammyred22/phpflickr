@@ -36,7 +36,7 @@ class phpFlickr {
     Var $error_msg;
     
     
-    function phpFlickr ($api_key, $die_on_error = false) 
+    function phpFlickr ($api_key, $die_on_error = true) 
     {
         //The API Key must be set before any calls can be made.  You can 
         //get your own at http://www.flickr.com/services/api/misc.api_keys.html
