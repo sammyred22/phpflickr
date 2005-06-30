@@ -1,5 +1,5 @@
 <?php
-/* phpFlickr Class 1.2
+/* phpFlickr Class 1.2.1
  * Written by Dan Coulter (dan@dancoulter.com)
  * Sourceforge Project Page: http://www.sourceforge.net/projects/phpflickr/
  * Released under GNU General Public License (http://www.gnu.org/copyleft/gpl.html)
@@ -577,7 +577,18 @@ class phpFlickr {
     
     function photos_search($args) 
     {
-        /* http://www.flickr.com/services/api/flickr.photos.getRecent.html */
+        /* This function strays from the method of arguments that I've
+         * used in the other functions for the fact that there are just
+         * so many arguments to this API method. What you'll need to do
+         * is pass an associative array to the function containing the
+         * arguments you want to pass to the API.  For example:
+         *   $photos = $f->photos_search(array("tags"=>"brown cow", "tag_mode"=>"any"));
+         * This will return photos tagged with either "brown" or "cow"
+         * or both. See the API documentation (link below) for a full 
+         * list of arguments.
+         */
+         
+        /* http://www.flickr.com/services/api/flickr.photos.search.html */
         $this->request("flickr.photos.search", $args);
         $this->parse_response();
         $result = $this->parsed_response['rsp']['photos'];
