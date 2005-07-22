@@ -15,10 +15,12 @@
  * 
  */
  
+session_start();
 require_once("xml.php");
 
 class phpFlickr {
     var $api_key;
+    var $secret;
     var $REST = "http://www.flickr.com/services/rest/";
     var $xml_parser;
     var $req;
@@ -36,11 +38,12 @@ class phpFlickr {
     Var $error_msg;
     
     
-    function phpFlickr ($api_key, $die_on_error = true) 
+    function phpFlickr ($api_key, $secret = NULL, $die_on_error = true) 
     {
         //The API Key must be set before any calls can be made.  You can 
         //get your own at http://www.flickr.com/services/api/misc.api_keys.html
         $this->api_key = $api_key;
+        $this->secret = $secret;
         $this->die_on_error = $die_on_error;
         
         //All calls to the API are done via the POST method using the PEAR::HTTP_Request package.
@@ -149,10 +152,25 @@ class phpFlickr {
         }
         
         //Process arguments, including method and login data.
-        $args = array_merge(array("method" => $command, "api_key" => $this->api_key, "email" => $this->email, "password" => $this->password), $args);
-        if(!($this->response = $this->getCached($args)) || $nocache) {
+        $args = array_merge(array("method" => $command, "api_key" => $this->api_key), $args);
+        if (!empty($this->email)) {
+            $args = array_merge($args, array("email" => $this->email));
+        }
+        if (!empty($this->password)) {
+            $args = array_merge($args, array("password" => $this->password));
+        }
+        if (!empty($_SESSION['phpFlickr_auth_token'])) {
+            $args = array_merge($args, array("auth_token" => $_SESSION['phpFlickr_auth_token']));
+        }
+        if (!($this->response = $this->getCached($args)) || $nocache) {
+            ksort($args);
             foreach ($args as $key => $data) {
+                $auth_sig .= $key . $data;
                 $this->req->addPostData($key, $data);
+            }
+            if (!empty($this->secret)) {
+                $api_sig = md5($this->secret . $auth_sig);
+                $this->req->addPostData("api_sig", $api_sig);
             }
         
             //Send Requests
@@ -192,13 +210,13 @@ class phpFlickr {
     function getErrorCode() {
 		// Returns the error code of the last call.  If the last call did not
 		// return an error. This will return a false boolean.
-		return $this->error_code();
+		return $this->error_code;
     }
     
     function getErrorMsg() {
 		// Returns the error message of the last call.  If the last call did not
 		// return an error. This will return a false boolean.
-		return $this->error_code();
+		return $this->error_msg;
     }
     
     /* These functions are front ends for the flickr calls */
@@ -232,6 +250,25 @@ class phpFlickr {
         $url .= ".jpg";
         return $url;
     }
+ 
+    function auth_redirect ($perms = "read", $remember_url = true)
+    {
+        if (empty($_SESSION['phpFlickr_auth_token'])) {
+            if ($remember_url) {
+                session_register("phpFlickr_auth_redirect");
+                $_SESSION['phpFlickr_auth_redirect'] = $_SERVER['REQUEST_URI'];
+            }
+            $api_sig = md5($this->secret . "api_key" . $this->api_key . "perms" . $perms);
+            header("Location: http://flickr.com/services/auth/?api_key=" . $this->api_key . "&perms=" . $perms . "&api_sig=". $api_sig);
+            exit;
+        } else {
+            $rsp = $this->auth_checkToken();
+            if ($this->error_code !== false) {
+                die($this->error_msg);
+            }
+            return $rsp['perms'];
+        }
+    }
     
     /* 
         These functions are the direct implementations of flickr calls.
@@ -239,7 +276,34 @@ class phpFlickr {
         included in a comment in the function. 
     */
     
-    /* Blogs methods */
+    /* Authentication methods */
+    function auth_checkToken () 
+    {
+        /* http://www.flickr.com/services/api/flickr.auth.checkToken.html */
+        $this->request("flickr.auth.checkToken");
+        $result = $this->parse_response();
+        return $result['auth'];
+    }
+    
+    function auth_getFrob () 
+    {
+        /* http://www.flickr.com/services/api/flickr.auth.getFrob.html */
+        $this->request("flickr.auth.getFrob");
+        $result = $this->parse_response();
+        return $result['frob'];
+    }
+    
+    function auth_getToken ($frob) 
+    {
+        /* http://www.flickr.com/services/api/flickr.auth.getToken.html */
+        $this->request("flickr.auth.getToken", array("frob"=>$frob));
+        $result = $this->parse_response();
+        session_register("phpFlickr_auth_token");
+        $_SESSION['phpFlickr_auth_token'] = $result['auth']['token'];
+        return $result['auth']['token'];
+    }
+
+/* Blogs methods */
     function blogs_getList () 
     {
         /* http://www.flickr.com/services/api/flickr.blogs.getList.html */
@@ -248,7 +312,8 @@ class phpFlickr {
         return $this->parsed_response['rsp']["blogs"]["blog"];
     }
     
-    function blogs_postPhoto($blog_id, $photo_id, $title, $description, $blog_password = NULL) {
+    function blogs_postPhoto($blog_id, $photo_id, $title, $description, $blog_password = NULL) 
+    {
         /* http://www.flickr.com/services/api/flickr.blogs.postPhoto.html */
         $this->request("flickr.blogs.postPhoto", array("blog_id"=>$blog_id, "photo_id"=>$photo_id, "title"=>$title, "description"=>$description, "blog_password"=>$blog_password));
         $this->parse_response();
