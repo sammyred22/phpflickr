@@ -2,6 +2,17 @@
 phpFlickr - Changelog
 ---------------------
 
+Version 1.3
+-------------
+
+2005-07-22 Dan Coulter  <dancoulter@users.sourceforge.net>
+    * phpFlickr.php: Added support for the new authentication scheme.
+      Added the three new auth methods plus the phpFlickr::auth() function
+      to act as a simple authentication check.
+      Fixed bugs in the error handling functions.
+    * README.txt: Fixed several typos relating to photos_search() and to
+      the PEAR prereqs. 
+
 Version 1.2.1
 -------------
 
