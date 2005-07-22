@@ -251,7 +251,7 @@ class phpFlickr {
         return $url;
     }
  
-    function auth_redirect ($perms = "read", $remember_url = true)
+    function auth ($perms = "read", $remember_url = true)
     {
         if (empty($_SESSION['phpFlickr_auth_token'])) {
             if ($remember_url) {
