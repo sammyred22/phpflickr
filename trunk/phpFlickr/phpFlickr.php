@@ -1,5 +1,5 @@
 <?php
-/* phpFlickr Class 1.2.1
+/* phpFlickr Class 1.3
  * Written by Dan Coulter (dan@dancoulter.com)
  * Sourceforge Project Page: http://www.sourceforge.net/projects/phpflickr/
  * Released under GNU General Public License (http://www.gnu.org/copyleft/gpl.html)
@@ -36,6 +36,7 @@ class phpFlickr {
     var $die_on_error;
     var $error_num;
     Var $error_msg;
+    var $token;
     
     
     function phpFlickr ($api_key, $secret = NULL, $die_on_error = true) 
@@ -159,7 +160,9 @@ class phpFlickr {
         if (!empty($this->password)) {
             $args = array_merge($args, array("password" => $this->password));
         }
-        if (!empty($_SESSION['phpFlickr_auth_token'])) {
+        if (!empty($this->token)) {
+            $args = array_merge($args, array("auth_token" => $this->token));
+        } elseif (!empty($_SESSION['phpFlickr_auth_token'])) {
             $args = array_merge($args, array("auth_token" => $_SESSION['phpFlickr_auth_token']));
         }
         if (!($this->response = $this->getCached($args)) || $nocache) {
@@ -207,13 +210,20 @@ class phpFlickr {
         return $this->parsed_response['rsp'];
     }
     
-    function getErrorCode() {
+    function setToken($token) {
+        // Sets an authentication token to use instead of the session variable
+        $this->token = $token;
+    }
+    
+    function getErrorCode() 
+    {
 		// Returns the error code of the last call.  If the last call did not
 		// return an error. This will return a false boolean.
 		return $this->error_code;
     }
     
-    function getErrorMsg() {
+    function getErrorMsg() 
+    {
 		// Returns the error message of the last call.  If the last call did not
 		// return an error. This will return a false boolean.
 		return $this->error_msg;
@@ -251,10 +261,14 @@ class phpFlickr {
         return $url;
     }
  
-    function auth ($perms = "read", $remember_url = true)
+    function auth ($perms = "read", $remember_uri = true)
     {
-        if (empty($_SESSION['phpFlickr_auth_token'])) {
-            if ($remember_url) {
+        // Redirects to Flickr's authentication piece if there is no valid token.
+        // If remember_uri is set to false, the callback script (included) will
+        // redirect to its default page.
+        
+        if (empty($_SESSION['phpFlickr_auth_token']) && empty($this->token)) {
+            if ($remember_uri) {
                 session_register("phpFlickr_auth_redirect");
                 $_SESSION['phpFlickr_auth_redirect'] = $_SERVER['REQUEST_URI'];
             }
