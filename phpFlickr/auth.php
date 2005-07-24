@@ -8,7 +8,7 @@
     $api_secret              = "<your api secret>";
     $default_redirect        = "/";
     $permissions             = "read";
-    $path_to_phpFlickr_class = "./"
+    $path_to_phpFlickr_class = "./";
 
     ob_start();
     require_once($path_to_phpFlickr_class . "phpFlickr.php");
