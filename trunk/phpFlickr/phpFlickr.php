@@ -18,6 +18,22 @@
 session_start();
 require_once("xml.php");
 
+// Decide which include path delimiter to use.  Windows should be using a semi-colon
+// and everything else should be using a colon.  If this isn't working on your system,
+// comment out this if statement and manually set the correct value into $path_delimiter.
+if (strpos($_SERVER['OS'], "Windows") !== false) {
+    $path_delimiter = ";";
+} else {
+    $path_delimiter = ":";
+}
+
+// This will add the packaged PEAR files into the include path for PHP, allowing you
+// to use them transparently.  This will prefer officially installed PEAR files if you
+// have them.  If you want to prefer the packaged files (there shouldn't be any reason
+// to), swap the two elements around the $path_delimiter variable.  If you don't have
+// the PEAR packages installed, you can leave this like it is and move on.
+ini_set("include_path", $_SERVER['include_path'] . $path_delimiter . substr(__FILE__, 0, strrpos(__FILE__, "/")) . "/PEAR");
+
 class phpFlickr {
     var $api_key;
     var $secret;
@@ -88,6 +104,9 @@ class phpFlickr {
                     INDEX ( `request` )
                 ) TYPE = MYISAM");
             $db->query("DELETE FROM $table WHERE expiration < DATE_SUB(NOW(), INTERVAL $cache_expire second)");
+            if (strpos($connection, "mysql") !== false) {
+                $db->query("OPTIMIZE TABLE $table");
+            }
             $this->cache = "db";
             $this->cache_db = $db;
             $this->cache_table = $table;
