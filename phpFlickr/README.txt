@@ -7,13 +7,16 @@ For more information about the class and upcoming tools and toys using it,
 visit http://www.phpflickr.com or http://www.sourceforge.net/projects/phpflickr/
 
 Installation instructions:
-1.  Be sure to have these PEAR prereqs installed:
-        HTTP_Request
-        PHPUnit
-        DB
-    If you have PEAR installed on your *nix server, you can run "pear install <package>"
-    from the command line.  You can find much more information and documentation
-    at http://pear.php.net/.  You can get detailed installation instructions there.
+1.  You have to be sure that you have the php PEAR prereq packages installed. The 
+    only one you absolutely need is HTTP_Response. If you want to do any caching, 
+    you'll also need to install the DB package.
+
+    NOTE: If you have installed version 1.3.1 of phpFlickr or later with the prereqs 
+    included, you can skip this step.
+    
+    If you have PEAR installed on your *nix server, you can run "pear install [package]" 
+    from the command line. You can find much more information and documentation at 
+    http://pear.php.net/. You can get detailed installation instructions there.
     
 2.  Copy xml.php and phpFlickr.php into the same folder on your server.  They need to
     be readible by your web server.  You can put them into an include folder defined
