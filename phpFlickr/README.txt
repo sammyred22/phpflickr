@@ -1,4 +1,4 @@
-phpFlickr Class 1.3
+phpFlickr Class 1.3.1
 Written by Dan Coulter (dancoulter@users.sourceforge.net)
 Project Homepage: http://www.phpflickr.com/
 Sourceforge Project Page: http://www.sourceforge.net/projects/phpflickr/
