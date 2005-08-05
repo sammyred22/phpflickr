@@ -1,37 +1,36 @@
-<?php
-    /* Edit these variables to reflect the values you need. $default_redirect 
+<?
+    /* Released with phpFlickr 1.3.1 
+     *
+     * Edit these variables to reflect the values you need. $default_redirect 
      * and $permissions are only important if you are linking here instead of
      * using phpFlickr::auth() from another page or if you set the remember_uri
      * argument to false.
      */
-    $api_key                 = "<your api key>";
-    $api_secret              = "<your api secret>";
+    $api_key                 = "[your api key]";
+    $api_secret              = "[your api secret]";
     $default_redirect        = "/";
     $permissions             = "read";
     $path_to_phpFlickr_class = "./";
 
     ob_start();
     require_once($path_to_phpFlickr_class . "phpFlickr.php");
+     
+	if (!empty($_GET['extra'])) {
+		$redirect = $_GET['extra'];
+	}
+    
     $f = new phpFlickr($api_key, $api_secret);
-    
-    if (!empty($_GET['phpFlickr_auth_redirect'])) {
-        session_register("phpFlickr_auth_redirect");
-        $_SESSION['phpFlickr_auth_redirect'] = $_GET['phpFlickr_auth_redirect'];
-    } elseif (!empty($_POST['phpFlickr_auth_redirect'])) {
-        session_register("phpFlickr_auth_redirect");
-        $_SESSION['phpFlickr_auth_redirect'] = $_POST['phpFlickr_auth_redirect'];
-    }
-    
+ 
     if (empty($_GET['frob'])) {
-        $f->auth("write", false);
+        $f->auth($permissions, false);
     } else {
         $f->auth_getToken($_GET['frob']);
-    }
+	}
     
-    if (empty($_SESSION['phpFlickr_auth_redirect'])) {
-        header("Location: " . $default_redirect);
+    if (empty($redirect)) {
+		header("Location: " . $default_redirect);
     } else {
-        header("Location: " . $_SESSION['phpFlickr_auth_redirect']);
+		header("Location: " . $redirect);
     }
-    
+ 
 ?>
