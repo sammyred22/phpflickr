@@ -1,5 +1,5 @@
 <?php
-/* phpFlickr Class 1.3
+/* phpFlickr Class 1.3.1
  * Written by Dan Coulter (dan@dancoulter.com)
  * Sourceforge Project Page: http://www.sourceforge.net/projects/phpflickr/
  * Released under GNU General Public License (http://www.gnu.org/copyleft/gpl.html)
@@ -279,7 +279,7 @@ class phpFlickr {
         $url .= ".jpg";
         return $url;
     }
- 
+    
     function auth ($perms = "read", $remember_uri = true)
     {
         // Redirects to Flickr's authentication piece if there is no valid token.
@@ -288,17 +288,20 @@ class phpFlickr {
         
         if (empty($_SESSION['phpFlickr_auth_token']) && empty($this->token)) {
             if ($remember_uri) {
-                session_register("phpFlickr_auth_redirect");
-                $_SESSION['phpFlickr_auth_redirect'] = $_SERVER['REQUEST_URI'];
+                $redirect = $_SERVER['REQUEST_URI'];
             }
-            $api_sig = md5($this->secret . "api_key" . $this->api_key . "perms" . $perms);
-            header("Location: http://flickr.com/services/auth/?api_key=" . $this->api_key . "&perms=" . $perms . "&api_sig=". $api_sig);
+            $api_sig = md5($this->secret . "api_key" . $this->api_key . "extra" . $redirect . "perms" . $perms);
+            header("Location: http://flickr.com/services/auth/?api_key=" . $this->api_key . "&extra=" . $redirect . "&perms=" . $perms . "&api_sig=". $api_sig);
             exit;
         } else {
+            $tmp = $this->die_on_error;
+            $this->die_on_error = false;
             $rsp = $this->auth_checkToken();
             if ($this->error_code !== false) {
-                die($this->error_msg);
+                unset($_SESSION['phpFlickr_auth_token']);
+                $this->auth($perms, $remember_uri);
             }
+            $this->die_on_error = $tmp;
             return $rsp['perms'];
         }
     }
@@ -419,14 +422,6 @@ class phpFlickr {
         return $this->parsed_response['rsp']["category"];
     }
     
-    function groups_getActiveList () 
-    {
-        /* http://www.flickr.com/services/api/flickr.groups.getActiveList.html */
-        $this->request("flickr.groups.getActiveList");
-        $this->parse_response();
-        return $this->parsed_response['rsp']["activegroups"];
-    }
-    
     function groups_getInfo ($group_id) 
     {
         /* http://www.flickr.com/services/api/flickr.groups.getInfo.html */
@@ -502,14 +497,6 @@ class phpFlickr {
         $this->request("flickr.people.getInfo", array("user_id"=>$user_id));
         $this->parse_response();
         return $this->parsed_response['rsp']["person"];
-    }
-    
-    function people_getOnlineList() 
-    {
-        /* http://www.flickr.com/services/api/flickr.people.getOnlineList.html */
-        $this->request("flickr.people.getOnlineList");
-        $this->parse_response();
-        return $this->parsed_response['rsp']["online"];
     }
     
     function people_getPublicGroups($user_id) 
@@ -680,7 +667,7 @@ class phpFlickr {
          * so many arguments to this API method. What you'll need to do
          * is pass an associative array to the function containing the
          * arguments you want to pass to the API.  For example:
-         *   $photos = $f->photos_search(array("tags"=>"brown cow", "tag_mode"=>"any"));
+         *   $photos = $f->photos_search(array("tags"=>"brown,cow", "tag_mode"=>"any"));
          * This will return photos tagged with either "brown" or "cow"
          * or both. See the API documentation (link below) for a full 
          * list of arguments.
