@@ -524,6 +524,16 @@ class phpFlickr {
         return $result;
     }
     
+    function people_getUploadStatus($user_id) 
+    {
+        /* http://www.flickr.com/services/api/flickr.people.getUploadStatus.html */
+        /* Requires Authentication */
+        $this->request("flickr.people.getUploadStatus");
+        $this->parse_response();
+        return $this->parsed_response['rsp']['user'];
+    }
+
+    
     /* Photos Methods */
     function photos_addTags ($photo_id, $tags) 
     {
