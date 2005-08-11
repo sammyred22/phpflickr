@@ -24,8 +24,8 @@ class xml  {
    
    var $caseInsensitive = false;
    
-   var $_replace = array('°','&');
-   var $_replaceWith = array('{deg}', '{amp}');
+   var $_replace = array('°','&',"\n");
+   var $_replaceWith = array('{deg}', '{amp}', '{lf}');
 
    function xml($caseInsensitive = false, $attributesDirectlyUnderParent = false, $childTagsDirectlyUnderParent = false)
    {
@@ -40,7 +40,8 @@ class xml  {
        
        $this->input = $xml;
        $xml = str_replace($this->_replace, $this->_replaceWith, $xml);
-
+       $xml = str_replace(">{lf}", ">\n", $xml);
+       
        unset($this->_struct, $this->_index, $this->parsed);
        xml_set_object($this->_parser, $this);
        xml_parser_set_option($this->_parser, XML_OPTION_CASE_FOLDING, $this->caseInsensitive);
