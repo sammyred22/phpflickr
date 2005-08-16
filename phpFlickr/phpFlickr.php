@@ -357,10 +357,10 @@ class phpFlickr {
     }
     
     /* Contacts Methods */
-    function contacts_getList () 
+    function contacts_getList ($filter = NULL) 
     {
         /* http://www.flickr.com/services/api/flickr.contacts.getList.html */
-        $this->request("flickr.contacts.getList");
+        $this->request("flickr.contacts.getList", array("filter"=>$filter));
         $this->parse_response();
         return $this->parsed_response['rsp']["contacts"]["contact"];
     }
