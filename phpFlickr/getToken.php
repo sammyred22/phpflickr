@@ -1,5 +1,5 @@
 <?php
-    /* Released with phpFlickr 1.3.1 
+    /* Last updated with phpFlickr 1.3.1
      *
      * If you need your app to always login with the same user (to see your private
      * photos or photosets, for example), you can use this file to login and get a
