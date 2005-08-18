@@ -2,6 +2,23 @@
 phpFlickr - Changelog
 ---------------------
 
+Version 1.3.2
+-------------
+
+2005-08-17 Dan Coulter  <dancoulter@users.sourceforge.net>
+    * phpFlickr.php: Fixed a bug in the include paths and a bug 
+      that was causing the cache not to work.
+    
+2005-08-16 Dan Coulter  <dancoulter@users.sourceforge.net>
+    * phpFlickr.php: Added filter parameter to contacts_getList().
+
+2005-08-10 Dan Coulter  <dancoulter@users.sourceforge.net>
+    * phpFlickr.php: Added support for flickr.people.getUploadStatus
+    
+2005-08-11 Dan Coulter  <dancoulter@users.sourceforge.net>
+    * xml.php: Fixed a bug that removed all newline characters from the
+      XML returned from Flickr.
+
 Version 1.3.1
 -------------
 

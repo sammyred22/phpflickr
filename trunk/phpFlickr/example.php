@@ -1,5 +1,7 @@
 <?
-/* This example file shows you how to call the 100 most recent public
+/* Last updated with phpFlickr 1.3.2
+ *
+ * This example file shows you how to call the 100 most recent public
  * photos.  It parses through them and prints out a link to each of them
  * along with the owner's name.
  *
