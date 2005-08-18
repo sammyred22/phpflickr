@@ -21,7 +21,7 @@ require_once("xml.php");
 // Decide which include path delimiter to use.  Windows should be using a semi-colon
 // and everything else should be using a colon.  If this isn't working on your system,
 // comment out this if statement and manually set the correct value into $path_delimiter.
-if (strpos($_SERVER['OS'], "Windows") !== false) {
+if (strpos($_SERVER['SERVER_SOFTWARE'], "Windows") !== false) {
     $path_delimiter = ";";
 } else {
     $path_delimiter = ":";
