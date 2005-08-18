@@ -1,5 +1,5 @@
 <?php
-/* phpFlickr Class 1.3.1
+/* phpFlickr Class 1.3.2
  * Written by Dan Coulter (dan@dancoulter.com)
  * Sourceforge Project Page: http://www.sourceforge.net/projects/phpflickr/
  * Released under GNU General Public License (http://www.gnu.org/copyleft/gpl.html)
@@ -32,7 +32,7 @@ if (strpos($_SERVER['OS'], "Windows") !== false) {
 // have them.  If you want to prefer the packaged files (there shouldn't be any reason
 // to), swap the two elements around the $path_delimiter variable.  If you don't have
 // the PEAR packages installed, you can leave this like it is and move on.
-ini_set("include_path", $_SERVER['include_path'] . $path_delimiter . substr(__FILE__, 0, strrpos(__FILE__, "/")) . "/PEAR");
+ini_set("include_path", ini_get("include_path") . $path_delimiter . substr(__FILE__, 0, strrpos(__FILE__, "/")) . "/PEAR");
 
 class phpFlickr {
     var $api_key;
@@ -184,8 +184,8 @@ class phpFlickr {
         } elseif (!empty($_SESSION['phpFlickr_auth_token'])) {
             $args = array_merge($args, array("auth_token" => $_SESSION['phpFlickr_auth_token']));
         }
+        ksort($args);
         if (!($this->response = $this->getCached($args)) || $nocache) {
-            ksort($args);
             foreach ($args as $key => $data) {
                 $auth_sig .= $key . $data;
                 $this->req->addPostData($key, $data);
