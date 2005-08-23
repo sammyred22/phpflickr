@@ -1,5 +1,5 @@
 <?php
-/* phpFlickr Class 1.3.2
+/* phpFlickr Class 1.3.3
  * Written by Dan Coulter (dan@dancoulter.com)
  * Sourceforge Project Page: http://www.sourceforge.net/projects/phpflickr/
  * Released under GNU General Public License (http://www.gnu.org/copyleft/gpl.html)
@@ -21,7 +21,7 @@ require_once("xml.php");
 // Decide which include path delimiter to use.  Windows should be using a semi-colon
 // and everything else should be using a colon.  If this isn't working on your system,
 // comment out this if statement and manually set the correct value into $path_delimiter.
-if (strpos($_SERVER['SERVER_SOFTWARE'], "Windows") !== false || strpos($_SERVER['SERVER_SOFTWARE'], "Win32") !== false) {
+if (strpos(__FILE__, ":") !== false) {
     $path_delimiter = ";";
 } else {
     $path_delimiter = ":";
@@ -185,6 +185,7 @@ class phpFlickr {
             $args = array_merge($args, array("auth_token" => $_SESSION['phpFlickr_auth_token']));
         }
         ksort($args);
+        $auth_sig = "";
         if (!($this->response = $this->getCached($args)) || $nocache) {
             foreach ($args as $key => $data) {
                 $auth_sig .= $key . $data;
