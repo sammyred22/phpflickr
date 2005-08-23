@@ -21,7 +21,7 @@ require_once("xml.php");
 // Decide which include path delimiter to use.  Windows should be using a semi-colon
 // and everything else should be using a colon.  If this isn't working on your system,
 // comment out this if statement and manually set the correct value into $path_delimiter.
-if (strpos($_SERVER['SERVER_SOFTWARE'], "Windows") !== false) {
+if (strpos($_SERVER['SERVER_SOFTWARE'], "Windows") !== false || strpos($_SERVER['SERVER_SOFTWARE'], "Win32") !== false) {
     $path_delimiter = ";";
 } else {
     $path_delimiter = ":";
@@ -600,7 +600,13 @@ class phpFlickr {
         /* http://www.flickr.com/services/api/flickr.photos.getInfo.html */
         $this->request("flickr.photos.getInfo", array("photo_id"=>$photo_id, "secret"=>$secret));
         $this->parse_response();
-        return $this->parsed_response['rsp']["photo"];
+        $result = $this->parsed_response['rsp']['photo'];
+        if (!empty($result['urls']['url']['type'])) {
+            $tmp = $result['urls']['url'];
+            unset($result['urls']['url']);
+            $result['urls']['url'][] = $tmp;
+        }
+        return $result;
     }
     
     function photos_getNotInSet($extras = NULL, $per_page = NULL, $page = NULL) 
