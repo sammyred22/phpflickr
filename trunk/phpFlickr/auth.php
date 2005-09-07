@@ -14,6 +14,7 @@
 
     ob_start();
     require_once($path_to_phpFlickr_class . "phpFlickr.php");
+    unset($_SESSION['phpFlickr_auth_token']);
      
 	if (!empty($_GET['extra'])) {
 		$redirect = $_GET['extra'];
