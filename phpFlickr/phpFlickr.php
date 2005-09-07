@@ -610,15 +610,21 @@ class phpFlickr {
         return $result;
     }
     
-    function photos_getNotInSet($extras = NULL, $per_page = NULL, $page = NULL) 
+    function photos_getNotInSet($extras = NULL, $per_page = NULL, $page = NULL)
     {
         /* http://www.flickr.com/services/api/flickr.photos.getNotInSet.html */
-        if (is_array($extras)) { 
-            $extras = implode(",", $extras); 
+        if (is_array($extras)) {
+            $extras = implode(",", $extras);
         }
         $this->request("flickr.photos.getNotInSet", array("extras"=>$extras, "per_page"=>$per_page, "page"=>$page));
         $this->parse_response();
-        return $this->parsed_response['rsp']["photos"];
+        $result = $this->parsed_response['rsp']["photos"];
+        if (!empty($result['photo']['id'])) {
+            $tmp = $result['photo'];
+            unset($result['photo']);
+            $result['photo'][] = $tmp;
+        }
+        return $result;
     }
     
     function photos_getPerms($photo_id) 
