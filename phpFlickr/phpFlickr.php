@@ -50,7 +50,7 @@ class phpFlickr {
     var $cache_dir = null;
     var $cache_expire = null;
     var $die_on_error;
-    var $error_num;
+    var $error_code;
     Var $error_msg;
     var $token;
     
