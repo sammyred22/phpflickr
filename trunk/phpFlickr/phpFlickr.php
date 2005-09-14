@@ -748,6 +748,15 @@ class phpFlickr {
         $this->parse_response();
         return $this->parsed_response['rsp']['licenses'];
     }
+
+    function photos_licenses_setLicense($photo_id, $license_id) 
+    {
+        /* http://www.flickr.com/services/api/flickr.photos.licenses.setLicense.html */
+        /* Requires Authentication */
+        $this->request("flickr.photos.licenses.setLicense", array("photo_id"=>$photo_ID, "license_id"=>$license_id));
+        $this->parse_response();
+        return true;
+    }
     
     /* Photos - Notes Methods */
     function photos_notes_add($photo_id, $note_x, $note_y, $note_w, $note_h, $note_text) 
