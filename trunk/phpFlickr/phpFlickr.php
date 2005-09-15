@@ -14,7 +14,6 @@
  *         http://sourceforge.net/forum/forum.php?forum_id=469652
  * 
  */
- 
 session_start();
 require_once('xml.php');
 
@@ -564,7 +563,7 @@ class phpFlickr {
             unset($result['group']);
             $result['group'][] = $tmp;
         }
-        return $result['group'];
+        return $result;
     }
     
     function people_getPublicPhotos($user_id, $extras = NULL, $per_page = NULL, $page = NULL) {
