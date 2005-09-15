@@ -251,6 +251,17 @@ class phpFlickr {
     
     /* These functions are front ends for the flickr calls */
     
+    function callMethod($method, $args = null) {
+        /* 
+         *  Calls any method.  Use this for non-implemented API calls
+         *  until I can update the class.  It's not suggested to use this
+         *  on any calls that I have implemented.
+         */
+        $this->request($method, $args);
+        $this->parse_response();
+        return $this->parsed_response['rsp'];
+    }
+    
     function buildPhotoURL ($photo, $size = "Medium") 
     {
         //receives an array (can use the individual photo data returned 
