@@ -251,17 +251,6 @@ class phpFlickr {
     
     /* These functions are front ends for the flickr calls */
     
-    function callMethod($method, $args = null) {
-        /* 
-         *  Calls any method.  Use this for non-implemented API calls
-         *  until I can update the class.  It's not suggested to use this
-         *  on any calls that I have implemented.
-         */
-        $this->request($method, $args);
-        $this->parse_response();
-        return $this->parsed_response['rsp'];
-    }
-    
     function buildPhotoURL ($photo, $size = "Medium") 
     {
         //receives an array (can use the individual photo data returned 
@@ -369,7 +358,7 @@ class phpFlickr {
     function blogs_postPhoto($blog_id, $photo_id, $title, $description, $blog_password = NULL) 
     {
         /* http://www.flickr.com/services/api/flickr.blogs.postPhoto.html */
-        $this->request('flickr.blogs.postPhoto', array('blog_id'=>$blog_id, 'photo_id'=>$photo_id, 'title'=>$title, 'description'=>$description, 'blog_password'=>$blog_password));
+        $this->request('flickr.blogs.postPhoto', array('blog_id'=>$blog_id, 'photo_id'=>$photo_id, 'title'=>$title, 'description'=>$description, 'blog_password'=>$blog_password), TRUE);
         $this->parse_response();
         return true;
     }
@@ -407,7 +396,7 @@ class phpFlickr {
     function favorites_add ($photo_id) 
     {
         /* http://www.flickr.com/services/api/flickr.favorites.add.html */
-        $this->request('flickr.favorites.add', array('photo_id'=>$photo_id));
+        $this->request('flickr.favorites.add', array('photo_id'=>$photo_id), TRUE);
         $this->parse_response();
         return true;
     }
@@ -450,7 +439,7 @@ class phpFlickr {
         if (is_array($extras)) {
             $extras = implode(",", $extras);
         }
-        $this->request("flickr.favorites.remove", array("photo_id"=>$photo_id));
+        $this->request("flickr.favorites.remove", array("photo_id"=>$photo_id), TRUE);
         $this->parse_response();
         return true;
     }
@@ -487,7 +476,7 @@ class phpFlickr {
     function groups_pools_add ($photo_id, $group_id) 
     {
         /* http://www.flickr.com/services/api/flickr.groups.pools.add.html */
-        $this->request("flickr.groups.pools.add", array("photo_id"=>$photo_id, "group_id"=>$group_id));
+        $this->request("flickr.groups.pools.add", array("photo_id"=>$photo_id, "group_id"=>$group_id), TRUE);
         $this->parse_response();
         return true;
     }
@@ -534,7 +523,7 @@ class phpFlickr {
     function groups_pools_remove ($photo_id, $group_id) 
     {
         /* http://www.flickr.com/services/api/flickr.groups.pools.remove.html */
-        $this->request("flickr.groups.pools.remove", array("photo_id"=>$photo_id, "group_id"=>$group_id));
+        $this->request("flickr.groups.pools.remove", array("photo_id"=>$photo_id, "group_id"=>$group_id), TRUE);
         $this->parse_response();
         return true;
     }
@@ -609,7 +598,7 @@ class phpFlickr {
     function photos_addTags ($photo_id, $tags) 
     {
         /* http://www.flickr.com/services/api/flickr.photos.addTags.html */
-        $this->request("flickr.photos.addTags", array("photo_id"=>$photo_id, "tags"=>$tags));
+        $this->request("flickr.photos.addTags", array("photo_id"=>$photo_id, "tags"=>$tags), TRUE);
         $this->parse_response();
         return true;
     }
@@ -794,7 +783,7 @@ class phpFlickr {
     function photos_removeTag($tag_id) 
     {
         /* http://www.flickr.com/services/api/flickr.photos.removeTag.html */
-        $this->request("flickr.photos.removeTag", array("tag_id"=>$tag_id));
+        $this->request("flickr.photos.removeTag", array("tag_id"=>$tag_id), TRUE);
         $this->parse_response();
         return true;
     }
@@ -827,7 +816,7 @@ class phpFlickr {
     function photos_setDates($photo_id, $date_posted = NULL, $date_taken = NULL, $date_taken_granularity = NULL) 
     {
         /* http://www.flickr.com/services/api/flickr.photos.setDates.html */
-        $this->request("flickr.photos.setDates", array("photo_id"=>$photo_id, "date_posted"=>$date_posted, "date_taken"=>$date_taken, "date_taken_granularity"=>$date_taken_granularity));
+        $this->request("flickr.photos.setDates", array("photo_id"=>$photo_id, "date_posted"=>$date_posted, "date_taken"=>$date_taken, "date_taken_granularity"=>$date_taken_granularity), TRUE);
         $this->parse_response();
         return true;
     }
@@ -835,7 +824,7 @@ class phpFlickr {
     function photos_setMeta($photo_id, $title, $description) 
     {
         /* http://www.flickr.com/services/api/flickr.photos.setMeta.html */
-        $this->request("flickr.photos.setMeta", array("photo_id"=>$photo_id, "title"=>$title, "description"=>$description));
+        $this->request("flickr.photos.setMeta", array("photo_id"=>$photo_id, "title"=>$title, "description"=>$description), TRUE);
         $this->parse_response();
         return true;
     }
@@ -843,7 +832,7 @@ class phpFlickr {
     function photos_setPerms($photo_id, $is_public, $is_friend, $is_family, $perm_comment, $perm_addmeta) 
     {
         /* http://www.flickr.com/services/api/flickr.photos.setPerms.html */
-        $this->request("flickr.photos.setPerms", array("photo_id"=>$photo_id, "is_public"=>$is_public, "is_friend"=>$is_friend, "is_family"=>$is_family, "perm_comment"=>$perm_comment, "perm_addmeta"=>$perm_addmeta));
+        $this->request("flickr.photos.setPerms", array("photo_id"=>$photo_id, "is_public"=>$is_public, "is_friend"=>$is_friend, "is_family"=>$is_family, "perm_comment"=>$perm_comment, "perm_addmeta"=>$perm_addmeta), TRUE);
         $this->parse_response();
         return true;
     }
@@ -851,7 +840,7 @@ class phpFlickr {
     function photos_setTags($photo_id, $tags) 
     {
         /* http://www.flickr.com/services/api/flickr.photos.setTags.html */
-        $this->request("flickr.photos.setTags", array("photo_id"=>$photo_id, "tags"=>$tags));
+        $this->request("flickr.photos.setTags", array("photo_id"=>$photo_id, "tags"=>$tags), TRUE);
         $this->parse_response();
         return true;
     }
@@ -869,7 +858,7 @@ class phpFlickr {
     {
         /* http://www.flickr.com/services/api/flickr.photos.licenses.setLicense.html */
         /* Requires Authentication */
-        $this->request("flickr.photos.licenses.setLicense", array("photo_id"=>$photo_ID, "license_id"=>$license_id));
+        $this->request("flickr.photos.licenses.setLicense", array("photo_id"=>$photo_ID, "license_id"=>$license_id), TRUE);
         $this->parse_response();
         return true;
     }
@@ -878,7 +867,7 @@ class phpFlickr {
     function photos_notes_add($photo_id, $note_x, $note_y, $note_w, $note_h, $note_text) 
     {
         /* http://www.flickr.com/services/api/flickr.photos.notes.add.html */
-        $this->request("flickr.photos.notes.add", array("photo_id" => $photo_id, "note_x" => $note_x, "note_y" => $note_y, "note_w" => $note_w, "note_h" => $note_h, "note_text" => $note_text));
+        $this->request("flickr.photos.notes.add", array("photo_id" => $photo_id, "note_x" => $note_x, "note_y" => $note_y, "note_w" => $note_w, "note_h" => $note_h, "note_text" => $note_text), TRUE);
         $this->parse_response();
         return $this->parsed_response['rsp']['note']['id'];
     }
@@ -886,7 +875,7 @@ class phpFlickr {
     function photos_notes_delete($note_id) 
     {
         /* http://www.flickr.com/services/api/flickr.photos.notes.delete.html */
-        $this->request("flickr.photos.notes.delete", array("note_id" => $note_id));
+        $this->request("flickr.photos.notes.delete", array("note_id" => $note_id), TRUE);
         $this->parse_response();
         return true;
     }
@@ -894,7 +883,7 @@ class phpFlickr {
     function photos_notes_edit($note_id, $note_x, $note_y, $note_w, $note_h, $note_text) 
     {
         /* http://www.flickr.com/services/api/flickr.photos.notes.edit.html */
-        $this->request("flickr.photos.notes.edit", array("note_id" => $note_id, "note_x" => $note_x, "note_y" => $note_y, "note_w" => $note_w, "note_h" => $note_h, "note_text" => $note_text));
+        $this->request("flickr.photos.notes.edit", array("note_id" => $note_id, "note_x" => $note_x, "note_y" => $note_y, "note_w" => $note_w, "note_h" => $note_h, "note_text" => $note_text), TRUE);
         $this->parse_response();
         return true;
     }
@@ -903,7 +892,7 @@ class phpFlickr {
     function photos_transform_rotate($photo_id, $degrees) 
     {
         /* http://www.flickr.com/services/api/flickr.photos.transform.rotate.html */
-        $this->request("flickr.photos.transform.rotate", array("photo_id" => $photo_id, "degrees" => $degrees));
+        $this->request("flickr.photos.transform.rotate", array("photo_id" => $photo_id, "degrees" => $degrees), TRUE);
         $this->parse_response();
         return true;
     }
@@ -912,7 +901,7 @@ class phpFlickr {
     function photosets_addPhoto($photoset_id, $photo_id) 
     {
         /* http://www.flickr.com/services/api/flickr.photosets.addPhoto.html */
-        $this->request("flickr.photosets.addPhoto", array("photoset_id" => $photoset_id, "photo_id" => $photo_id));
+        $this->request("flickr.photosets.addPhoto", array("photoset_id" => $photoset_id, "photo_id" => $photo_id), TRUE);
         $this->parse_response();
         return true;
     }
@@ -920,7 +909,7 @@ class phpFlickr {
     function photosets_create($title, $description, $primary_photo_id) 
     {
         /* http://www.flickr.com/services/api/flickr.photosets.create.html */
-        $this->request("flickr.photosets.create", array("title" => $title, "primary_photo_id" => $primary_photo_id, "description" => $description));
+        $this->request("flickr.photosets.create", array("title" => $title, "primary_photo_id" => $primary_photo_id, "description" => $description), TRUE);
         $this->parse_response();
         return $this->parsed_response['rsp']['photoset'];
     }
@@ -928,7 +917,7 @@ class phpFlickr {
     function photosets_delete($photoset_id) 
     {
         /* http://www.flickr.com/services/api/flickr.photosets.delete.html */
-        $this->request("flickr.photosets.delete", array("photoset_id" => $photoset_id));
+        $this->request("flickr.photosets.delete", array("photoset_id" => $photoset_id), TRUE);
         $this->parse_response();
         return true;
     }
@@ -936,7 +925,7 @@ class phpFlickr {
     function photosets_editMeta($photoset_id, $title, $description = NULL) 
     {
         /* http://www.flickr.com/services/api/flickr.photosets.editMeta.html */
-        $this->request("flickr.photosets.editMeta", array("photoset_id" => $photoset_id, "title" => $title, "description" => $description));
+        $this->request("flickr.photosets.editMeta", array("photoset_id" => $photoset_id, "title" => $title, "description" => $description), TRUE);
         $this->parse_response();
         return true;
     }
@@ -944,7 +933,7 @@ class phpFlickr {
     function photosets_editPhotos($photoset_id, $primary_photo_id, $photo_ids) 
     {
         /* http://www.flickr.com/services/api/flickr.photosets.editPhotos.html */
-        $this->request("flickr.photosets.editPhotos", array("photoset_id" => $photoset_id, "primary_photo_id" => $primary_photo_id, "photo_ids" => $photo_ids));
+        $this->request("flickr.photosets.editPhotos", array("photoset_id" => $photoset_id, "primary_photo_id" => $primary_photo_id, "photo_ids" => $photo_ids), TRUE);
         $this->parse_response();
         return true;
     }
@@ -999,7 +988,7 @@ class phpFlickr {
         if (is_array($photoset_ids)) {
             $photoset_ids = implode(",", $photoset_ids);
         }
-        $this->request("flickr.photosets.orderSets", array("photoset_ids" => $photoset_ids));
+        $this->request("flickr.photosets.orderSets", array("photoset_ids" => $photoset_ids), TRUE);
         $this->parse_response();
         return true;
     }
@@ -1007,7 +996,7 @@ class phpFlickr {
     function photosets_removePhoto($photoset_id, $photo_id) 
     {
         /* http://www.flickr.com/services/api/flickr.photosets.removePhoto.html */
-        $this->request("flickr.photosets.removePhoto", array("photoset_id" => $photoset_id, "photo_id" => $photo_id));
+        $this->request("flickr.photosets.removePhoto", array("photoset_id" => $photoset_id, "photo_id" => $photo_id), TRUE);
         $this->parse_response();
         return true;
     }
