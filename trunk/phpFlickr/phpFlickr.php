@@ -16,15 +16,15 @@
  */
  
 session_start();
-require_once("xml.php");
+require_once('xml.php');
 
 // Decide which include path delimiter to use.  Windows should be using a semi-colon
 // and everything else should be using a colon.  If this isn't working on your system,
 // comment out this if statement and manually set the correct value into $path_delimiter.
-if (strpos(__FILE__, ":") !== false) {
-    $path_delimiter = ";";
+if (strpos(__FILE__, ':') !== false) {
+    $path_delimiter = ';';
 } else {
-    $path_delimiter = ":";
+    $path_delimiter = ':';
 }
 
 // This will add the packaged PEAR files into the include path for PHP, allowing you
@@ -32,12 +32,12 @@ if (strpos(__FILE__, ":") !== false) {
 // have them.  If you want to prefer the packaged files (there shouldn't be any reason
 // to), swap the two elements around the $path_delimiter variable.  If you don't have
 // the PEAR packages installed, you can leave this like it is and move on.
-ini_set("include_path", ini_get("include_path") . $path_delimiter . substr(__FILE__, 0, strrpos(__FILE__, "/")) . "/PEAR");
+ini_set('include_path', ini_get('include_path') . $path_delimiter . substr(__FILE__, 0, strrpos(__FILE__, '/')) . '/PEAR');
 
 class phpFlickr {
     var $api_key;
     var $secret;
-    var $REST = "http://www.flickr.com/services/rest/";
+    var $REST = 'http://www.flickr.com/services/rest/';
     var $xml_parser;
     var $req;
     var $response;
@@ -64,7 +64,7 @@ class phpFlickr {
         $this->die_on_error = $die_on_error;
         
         //All calls to the API are done via the POST method using the PEAR::HTTP_Request package.
-        require_once "HTTP/Request.php";
+        require_once 'HTTP/Request.php';
         $this->req =& new HTTP_Request();
         $this->req->setMethod(HTTP_REQUEST_METHOD_POST);
         
@@ -80,7 +80,7 @@ class phpFlickr {
         return $this->test_login();
     }
     
-    function enableCache($type, $connection, $cache_expire = 600, $table = "flickr_cache") 
+    function enableCache($type, $connection, $cache_expire = 600, $table = 'flickr_cache') 
     {
         // Turns on caching.  $type must be either "db" (for database caching) or "fs" (for filesystem).
         // When using db, $connection must be a PEAR::DB connection string. Example:
@@ -89,8 +89,8 @@ class phpFlickr {
         // When using file system, caching, the $connection is the folder that the web server has write
         // access to. Use absolute paths for best results.  Relative paths may have unexpected behavior 
         // when you include this.  They'll usually work, you'll just want to test them.
-        if ($type == "db") {
-            require_once "DB.php";
+        if ($type == 'db') {
+            require_once 'DB.php';
             $db =& DB::connect($connection);
             if (PEAR::isError($db)) {
                 die($db->getMessage());
@@ -104,19 +104,19 @@ class phpFlickr {
                     INDEX ( `request` )
                 ) TYPE = MYISAM");
             $db->query("DELETE FROM $table WHERE expiration < DATE_SUB(NOW(), INTERVAL $cache_expire second)");
-            if (strpos($connection, "mysql") !== false) {
-                $db->query("OPTIMIZE TABLE $table");
+            if (strpos($connection, 'mysql') !== false) {
+                $db->query('OPTIMIZE TABLE ' . $table);
             }
-            $this->cache = "db";
+            $this->cache = 'db';
             $this->cache_db = $db;
             $this->cache_table = $table;
-        } elseif ($type = "fs") {
-            $this->cache = "fs";
+        } elseif ($type = 'fs') {
+            $this->cache = 'fs';
             chdir($connection);
             $this->cache_dir = getcwd();
-            if ($dir = opendir("./")) {
+            if ($dir = opendir('./')) {
                 while ($file = readdir($dir)) {
-                    if (substr($file, -6) == ".cache" && ((filemtime($file) + $cache_expire) < time()) ) {
+                    if (substr($file, -6) == '.cache' && ((filemtime($file) + $cache_expire) < time()) ) {
                         unlink($file);
                     }
                 }
@@ -131,12 +131,12 @@ class phpFlickr {
         //If there is no cache result, it returns a value of false. If it finds one
         //it returns the unparsed XML.
         $reqhash = md5(serialize($request));
-        if ($this->cache == "db") {
+        if ($this->cache == 'db') {
             if($this->cache_db->getOne("SELECT COUNT(*) FROM " . $this->cache_table . " WHERE request = '" . $reqhash . "'")) {
                 return $this->cache_db->getOne("SELECT response FROM " . $this->cache_table . " WHERE request = '" . $reqhash . "'");
             }
-        } elseif ($this->cache == "fs") {
-            $file = $this->cache_dir . "/" . $reqhash . ".cache";
+        } elseif ($this->cache == 'fs') {
+            $file = $this->cache_dir . '/' . $reqhash . '.cache';
             if (file_exists($file)) {
                 return file_get_contents($file);
             }
@@ -148,7 +148,7 @@ class phpFlickr {
     {
         //Caches the unparsed XML of a request.
         $reqhash = md5(serialize($request));
-        if ($this->cache == "db") {
+        if ($this->cache == 'db') {
             $this->cache_db->query("DELETE FROM $this->cache_table WHERE request = '$reqhash'");
             $sql = "INSERT INTO " . $this->cache_table . " (request, response, expiration) VALUES ('$reqhash', '" . str_replace("'", "''", $response) . "', '" . strftime("%Y-%m-%d %T") . "')";
             $this->cache_db->query($sql);
@@ -317,7 +317,7 @@ class phpFlickr {
     function auth_checkToken () 
     {
         /* http://www.flickr.com/services/api/flickr.auth.checkToken.html */
-        $this->request("flickr.auth.checkToken");
+        $this->request('flickr.auth.checkToken');
         $result = $this->parse_response();
         return $result['auth'];
     }
@@ -325,7 +325,7 @@ class phpFlickr {
     function auth_getFrob () 
     {
         /* http://www.flickr.com/services/api/flickr.auth.getFrob.html */
-        $this->request("flickr.auth.getFrob");
+        $this->request('flickr.auth.getFrob');
         $result = $this->parse_response();
         return $result['frob'];
     }
@@ -333,9 +333,9 @@ class phpFlickr {
     function auth_getToken ($frob) 
     {
         /* http://www.flickr.com/services/api/flickr.auth.getToken.html */
-        $this->request("flickr.auth.getToken", array("frob"=>$frob));
+        $this->request('flickr.auth.getToken', array('frob'=>$frob));
         $result = $this->parse_response();
-        session_register("phpFlickr_auth_token");
+        session_register('phpFlickr_auth_token');
         $_SESSION['phpFlickr_auth_token'] = $result['auth']['token'];
         return $result['auth']['token'];
     }
@@ -344,15 +344,21 @@ class phpFlickr {
     function blogs_getList () 
     {
         /* http://www.flickr.com/services/api/flickr.blogs.getList.html */
-        $this->request("flickr.blogs.getList");
+        $this->request('flickr.blogs.getList');
         $this->parse_response();
-        return $this->parsed_response['rsp']["blogs"]["blog"];
+        $result = $this->parsed_response['rsp']['blogs'];
+        if (!empty($result['blog']['id'])) {
+            $tmp = $result['blog'];
+            unset($result['blog']);
+            $result['blog'][] = $tmp;
+        }
+        return $result['blog'];
     }
     
     function blogs_postPhoto($blog_id, $photo_id, $title, $description, $blog_password = NULL) 
     {
         /* http://www.flickr.com/services/api/flickr.blogs.postPhoto.html */
-        $this->request("flickr.blogs.postPhoto", array("blog_id"=>$blog_id, "photo_id"=>$photo_id, "title"=>$title, "description"=>$description, "blog_password"=>$blog_password));
+        $this->request('flickr.blogs.postPhoto', array('blog_id'=>$blog_id, 'photo_id'=>$photo_id, 'title'=>$title, 'description'=>$description, 'blog_password'=>$blog_password));
         $this->parse_response();
         return true;
     }
@@ -361,24 +367,36 @@ class phpFlickr {
     function contacts_getList ($filter = NULL) 
     {
         /* http://www.flickr.com/services/api/flickr.contacts.getList.html */
-        $this->request("flickr.contacts.getList", array("filter"=>$filter));
+        $this->request('flickr.contacts.getList', array('filter'=>$filter));
         $this->parse_response();
-        return $this->parsed_response['rsp']["contacts"]["contact"];
+        $result = $this->parsed_response['rsp']['contacts'];
+        if (!empty($result['contact']['id'])) {
+            $tmp = $result['contact'];
+            unset($result['contact']);
+            $result['contact'][] = $tmp;
+        }
+        return $result['contact'];
     }
     
     function contacts_getPublicList($user_id) 
     {
         /* http://www.flickr.com/services/api/flickr.contacts.getPublicList.html */
-        $this->request("flickr.contacts.getPublicList", array("user_id"=>$user_id));
+        $this->request('flickr.contacts.getPublicList', array('user_id'=>$user_id));
         $this->parse_response();
-        return $this->parsed_response['rsp']["contacts"]["contact"];
+        $result = $this->parsed_response['rsp']['contacts'];
+        if (!empty($result['contact']['id'])) {
+            $tmp = $result['contact'];
+            unset($result['contact']);
+            $result['contact'][] = $tmp;
+        }
+        return $result['contact'];
     }
     
     /* Favorites Methods */
     function favorites_add ($photo_id) 
     {
         /* http://www.flickr.com/services/api/flickr.favorites.add.html */
-        $this->request("flickr.favorites.add", array("photo_id"=>$photo_id));
+        $this->request('flickr.favorites.add', array('photo_id'=>$photo_id));
         $this->parse_response();
         return true;
     }
@@ -389,7 +407,13 @@ class phpFlickr {
         if (is_array($extras)) { $extras = implode(",", $extras); }
         $this->request("flickr.favorites.getList", array("user_id"=>$user_id, "extras"=>$extras, "per_page"=>$per_page, "page"=>$page));
         $this->parse_response();
-        return $this->parsed_response['rsp']["photos"]["photo"];
+        $result = $this->parsed_response['rsp']['photos'];
+        if (!empty($result['photo']['id'])) {
+            $tmp = $result['photo'];
+            unset($result['photo']);
+            $result['photo'][] = $tmp;
+        }
+        return $result['photo'];
     }
     
     function favorites_getPublicList($user_id = NULL, $extras = NULL, $per_page = NULL, $page = NULL) 
@@ -400,7 +424,13 @@ class phpFlickr {
         }
         $this->request("flickr.favorites.getPublicList", array("user_id"=>$user_id, "extras"=>$extras, "per_page"=>$per_page, "page"=>$page));
         $this->parse_response();
-        return $this->parsed_response['rsp']["photos"]["photo"];
+        $result = $this->parsed_response['rsp']['photos'];
+        if (!empty($result['photo']['id'])) {
+            $tmp = $result['photo'];
+            unset($result['photo']);
+            $result['photo'][] = $tmp;
+        }
+        return $result['photo'];
     }
     
     function favorites_remove($photo_id) 
@@ -420,7 +450,18 @@ class phpFlickr {
         /* http://www.flickr.com/services/api/flickr.groups.browse.html */
         $this->request("flickr.groups.browse", array("cat_id"=>$cat_id));
         $this->parse_response();
-        return $this->parsed_response['rsp']["category"];
+        $result = $this->parsed_response['rsp']['category'];
+        if (!empty($result['subcat']['id'])) {
+            $tmp = $result['subcat'];
+            unset($result['subcat']);
+            $result['subcat'][] = $tmp;
+        }
+        if (!empty($result['group']['nsid'])) {
+            $tmp = $result['group'];
+            unset($result['group']);
+            $result['group'][] = $tmp;
+        }
+        return $result;
     }
     
     function groups_getInfo ($group_id) 
@@ -453,7 +494,13 @@ class phpFlickr {
         /* http://www.flickr.com/services/api/flickr.groups.pools.getGroups.html */
         $this->request("flickr.groups.pools.getGroups");
         $this->parse_response();
-        return $this->parsed_response['rsp']["groups"]["group"];
+        $result = $this->parsed_response['rsp']['groups']['group'];
+        if (!empty($result['id'])) {
+            $tmp = $result;
+            unset($result);
+            $result[] = $tmp;
+        }
+        return $result;
     }
     
     function groups_pools_getPhotos ($group_id, $tags = NULL, $extras = NULL, $per_page = NULL, $page = NULL) 
@@ -464,7 +511,13 @@ class phpFlickr {
         }
         $this->request("flickr.groups.pools.getPhotos", array("group_id"=>$group_id, "tags"=>$tags, "extras"=>$extras, "per_page"=>$per_page, "page"=>$page));
         $this->parse_response();
-        return $this->parsed_response['rsp']["photos"];
+        $result = $this->parsed_response['rsp']['photos'];
+        if (!empty($result['photo']['id'])) {
+            $tmp = $result['photo'];
+            unset($result['photo']);
+            $result['photo'][] = $tmp;
+        }
+        return $result;
     }
     
     function groups_pools_remove ($photo_id, $group_id) 
@@ -505,7 +558,13 @@ class phpFlickr {
         /* http://www.flickr.com/services/api/flickr.people.getPublicGroups.html */
         $this->request("flickr.people.getPublicGroups", array("user_id"=>$user_id));
         $this->parse_response();
-        return $this->parsed_response['rsp']['groups'];
+        $result = $this->parsed_response['rsp']['groups'];
+        if (!empty($result['group']['nsid'])) {
+            $tmp = $result['group'];
+            unset($result['group']);
+            $result['group'][] = $tmp;
+        }
+        return $result['group'];
     }
     
     function people_getPublicPhotos($user_id, $extras = NULL, $per_page = NULL, $page = NULL) {
@@ -543,6 +602,24 @@ class phpFlickr {
         $this->parse_response();
         return true;
     }
+    
+    function photos_getAllContexts ($photo_id) 
+    {
+        /* http://www.flickr.com/services/api/flickr.photos.getAllContexts.html */
+        $this->request("flickr.photos.getAllContexts", array("photo_id"=>$photo_id));
+        $this->parse_response();
+        $result = $this->parsed_response['rsp'];
+        if (!empty($result['set']['id'])) {
+            $tmp = $result['set'];
+            unset($result['set']);
+            $result['set'][] = $tmp;
+        }
+        if (!empty($result['pool']['id'])) {
+            $tmp = $result['pool'];
+            unset($result['pool']);
+            $result['pool'][] = $tmp;
+        }
+        return $result;    }
     
     function photos_getContactsPhotos ($count = NULL, $just_friends = NULL, $single_photo = NULL, $include_self = NULL) 
     {
@@ -585,7 +662,13 @@ class phpFlickr {
         /* http://www.flickr.com/services/api/flickr.photos.getCounts.html */
         $this->request("flickr.photos.getCounts", array("dates"=>$dates, "taken_dates"=>$taken_dates));
         $this->parse_response();
-        return $this->parsed_response['rsp']["photocounts"]["photocount"];
+        $result = $this->parsed_response['rsp']['photocounts'];
+        if (!empty($result['photocount']['count'])) {
+            $tmp = $result['photocount'];
+            unset($result['photocount']);
+            $result['photocount'][] = $tmp;
+        }
+        return $result['photocount'];
     }
     
     function photos_getExif ($photo_id, $secret = NULL) 
@@ -593,7 +676,13 @@ class phpFlickr {
         /* http://www.flickr.com/services/api/flickr.photos.getExif.html */
         $this->request("flickr.photos.getExif", array("photo_id"=>$photo_id, "secret"=>$secret));
         $this->parse_response();
-        return $this->parsed_response['rsp']["photo"];
+        $result = $this->parsed_response['rsp']['photo'];
+        if (!empty($result['exif']['tagspace'])) {
+            $tmp = $result['exif'];
+            unset($result['exif']);
+            $result['exif'][] = $tmp;
+        }
+        return $result;
     }
     
     function photos_getInfo($photo_id, $secret = NULL) 
@@ -606,6 +695,16 @@ class phpFlickr {
             $tmp = $result['urls']['url'];
             unset($result['urls']['url']);
             $result['urls']['url'][] = $tmp;
+        }
+        if (!empty($result['tags']['tag']['id'])) {
+            $tmp = $result['tags']['tag'];
+            unset($result['tags']['tag']);
+            $result['tags']['tag'][] = $tmp;
+        }
+        if (!empty($result['notes']['note']['id'])) {
+            $tmp = $result['notes']['note'];
+            unset($result['notes']['note']);
+            $result['notes']['note'][] = $tmp;
         }
         return $result;
     }
@@ -672,7 +771,13 @@ class phpFlickr {
         }
         $this->request("flickr.photos.getUntagged", array("extras"=>$extras, "per_page"=>$per_page, "page"=>$page));
         $this->parse_response();
-        return $this->parsed_response['rsp']["photos"];
+        $result = $this->parsed_response['rsp']['photos'];
+        if (!empty($result['photo']['id'])) {
+            $tmp = $result['photo'];
+            unset($result['photo']);
+            $result['photo'][] = $tmp;
+        }
+        return $result;
     }
     
     function photos_removeTag($tag_id) 
@@ -854,7 +959,13 @@ class phpFlickr {
         /* http://www.flickr.com/services/api/flickr.photosets.getList.html */
         $this->request("flickr.photosets.getList", array("user_id" => $user_id));
         $this->parse_response();
-        return $this->parsed_response['rsp']['photosets'];
+        $result = $this->parsed_response['rsp']['photosets'];
+        if (!empty($result['photoset']['id'])) {
+            $tmp = $result['photoset'];
+            unset($result['photoset']);
+            $result['photoset'][] = $tmp;
+        }
+        return $result;
     }
     
     function photosets_getPhotos($photoset_id) 
@@ -862,7 +973,13 @@ class phpFlickr {
         /* http://www.flickr.com/services/api/flickr.photosets.getPhotos.html */
         $this->request("flickr.photosets.getPhotos", array("photoset_id" => $photoset_id));
         $this->parse_response();
-        return $this->parsed_response['rsp']['photoset'];
+        $result = $this->parsed_response['rsp']['photoset'];
+        if (!empty($result['photo']['id'])) {
+            $tmp = $result['photo'];
+            unset($result['photo']);
+            $result['photo'][] = $tmp;
+        }
+        return $result;
     }
     
     function photosets_orderSets($photoset_ids) 
@@ -890,7 +1007,18 @@ class phpFlickr {
         /* http://www.flickr.com/services/api/flickr.reflection.getMethodInfo.html */
         $this->request("flickr.reflection.getMethodInfo", array("method_name" => $method_name));
         $this->parse_response();
-        return $this->parsed_response['rsp']['method'];
+        $result = $this->parsed_response['rsp']['method'];
+        if (!empty($result['arguments']['argument']['name'])) {
+            $tmp = $result['arguments']['argument'];
+            unset($result['arguments']['argument']);
+            $result['arguments']['argument'][] = $tmp;
+        }
+        if (!empty($result['errors']['error']['code'])) {
+            $tmp = $result['errors']['error'];
+            unset($result['errors']['error']);
+            $result['errors']['error'][] = $tmp;
+        }
+        return $result;
     }
     
     function reflection_getMethods() 
@@ -907,7 +1035,13 @@ class phpFlickr {
         /* http://www.flickr.com/services/api/flickr.tags.getListPhoto.html */
         $this->request("flickr.tags.getListPhoto", array("photo_id" => $photo_id));
         $this->parse_response();
-        return $this->parsed_response['rsp']['photo'];
+        $result = $this->parsed_response['rsp']['photo'];
+        if (!empty($result['tags']['tag']['id'])) {
+            $tmp = $result['tags']['tag'];
+            unset($result['tags']['tag']);
+            $result['tags']['tag'][] = $tmp;
+        }
+        return $result;
     }
     
     function tags_getListUser($user_id = NULL) 
@@ -915,7 +1049,13 @@ class phpFlickr {
         /* http://www.flickr.com/services/api/flickr.tags.getListUser.html */
         $this->request("flickr.tags.getListUser", array("user_id" => $user_id));
         $this->parse_response();
-        return $this->parsed_response['rsp']['who'];
+        $result = $this->parsed_response['rsp']['who'];
+        if (!is_array($result['tags']['tag'])) {
+            $tmp = $result['tags']['tag'];
+            unset($result['tags']['tag']);
+            $result['tags']['tag'][] = $tmp;
+        }
+        return $result;
     }
     
     function tags_getListUserPopular($user_id = NULL, $count = NULL) 
@@ -923,7 +1063,13 @@ class phpFlickr {
         /* http://www.flickr.com/services/api/flickr.tags.getListUserPopular.html */
         $this->request("flickr.tags.getListUserPopular", array("user_id" => $user_id, "count" => $count));
         $this->parse_response();
-        return $this->parsed_response['rsp']['who'];
+        $result = $this->parsed_response['rsp']['who'];
+        if (!empty($result['tags']['tag']['count'])) {
+            $tmp = $result['tags']['tag'];
+            unset($result['tags']['tag']);
+            $result['tags']['tag'][] = $tmp;
+        }
+        return $result;
     }
     
     function tags_getRelated($tag) 
@@ -931,7 +1077,13 @@ class phpFlickr {
         /* http://www.flickr.com/services/api/flickr.tags.getRelated.html */
         $this->request("flickr.tags.getRelated", array("tag" => $tag));
         $this->parse_response();
-        return $this->parsed_response['rsp']['tags'];
+        $result = $this->parsed_response['rsp']['tags'];
+        if (!is_array($result['tag'])) {
+            $tmp = $result['tag'];
+            unset($result['tag']);
+            $result['tag'][] = $tmp;
+        }
+        return $result;
     }
     
     function test_echo($args = array()) 
