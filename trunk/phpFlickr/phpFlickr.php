@@ -128,12 +128,13 @@ class phpFlickr {
     function getCached ($request) 
     {
         //Checks the database or filesystem for a cached result to the request.
-        //If there is no cache result, it returns a value of false. If it finds one
+        //If there is no cache result, it returns a value of false. If it finds one,
         //it returns the unparsed XML.
         $reqhash = md5(serialize($request));
         if ($this->cache == 'db') {
-            if($this->cache_db->getOne("SELECT COUNT(*) FROM " . $this->cache_table . " WHERE request = '" . $reqhash . "'")) {
-                return $this->cache_db->getOne("SELECT response FROM " . $this->cache_table . " WHERE request = '" . $reqhash . "'");
+            $result = $this->cache_db->getOne("SELECT response FROM " . $this->cache_table . " WHERE request = '" . $reqhash . "'");
+            if (!empty($result)) {
+                return $result;
             }
         } elseif ($this->cache == 'fs') {
             $file = $this->cache_dir . '/' . $reqhash . '.cache';
