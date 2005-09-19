@@ -1,10 +1,10 @@
-phpFlickr Class 1.3.3
+phpFlickr Class 1.4
 Written by Dan Coulter (dancoulter@users.sourceforge.net)
 Project Homepage: http://www.phpflickr.com/
 Sourceforge Project Page: http://www.sourceforge.net/projects/phpflickr/
 Released under GNU General Public License (http://www.gnu.org/copyleft/gpl.html)
-For more information about the class and upcoming tools and toys using it,
-visit http://www.phpflickr.com or http://www.sourceforge.net/projects/phpflickr/
+For more information about the class and upcoming tools and applications using it,
+visit http://www.phpflickr.com/ or http://www.sourceforge.net/projects/phpflickr/
 
 Installation instructions:
 1.  You have to be sure that you have the php PEAR prereq packages installed. The 
@@ -157,6 +157,29 @@ Using Caching:
         Alternatively, you can specify a directory that is outside of the web server's
         document root.
         
+Uploading
+    Uploading is pretty simple. Aside from being authenticated (see Authentication 
+    section) the very minimum that you'll have to pass is a path to an image file on 
+    your php server. You can do either synchronous or asynchronous uploading as follows:
+        synchronous:    sync_upload("photo.jpg");
+        asynchronous:   async_upload("photo.jpg");
+    
+    The basic difference is that synchronous uploading waits around until Flickr
+    processes the photo and returns a PhotoID.  Asynchronous just uploads the
+    picture and gets a "ticketid" that you can use to check on the status of your 
+    upload. Asynchronous is much faster, though the photoid won't be instantly
+    available for you. You can read more about asynchronous uploading here:
+        http://www.flickr.com/services/api/upload.async.html
+        
+    Both of the functions take the same arguments which are:
+        Photo: The path of the file to upload.
+        Title: The title of the photo.
+        Description: A description of the photo. May contain some limited HTML.
+        Tags: A space-separated list of tags to apply to the photo.
+        is_public: Set to 0 for no, 1 for yes.
+        is_friend: Set to 0 for no, 1 for yes.
+        is_family: Set to 0 for no, 1 for yes.
+
 Other Notes:
     1.  Many of the methods have optional arguments.  For these, I have implemented 
         them in the same order that the Flickr API documentation lists them. PHP
@@ -174,8 +197,8 @@ and news.  I plan to implement file uploads and functions to aggregate data from
 several different methods for easier use in a web application.  Thanks for your
 interest in this project!
 
-    Please email me or submit all problems or questions to the Help Forum on
-    my project page:
-        http://sourceforge.net/forum/forum.php?forum_id=469652
+    Please email me or submit all problems or questions to the Help topic on
+    the phpFlickr forums:
+        http://www.phpflickr.com/forums/
 
  
