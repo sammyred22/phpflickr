@@ -1,5 +1,5 @@
 <?php
-/* phpFlickr Class 1.3.3
+/* phpFlickr Class 1.4
  * Written by Dan Coulter (dan@dancoulter.com)
  * Sourceforge Project Page: http://www.sourceforge.net/projects/phpflickr/
  * Released under GNU General Public License (http://www.gnu.org/copyleft/gpl.html)
@@ -37,6 +37,7 @@ class phpFlickr {
     var $api_key;
     var $secret;
     var $REST = 'http://www.flickr.com/services/rest/';
+    var $Upload = 'http://www.flickr.com/services/upload/';
     var $xml_parser;
     var $req;
     var $response;
@@ -278,6 +279,104 @@ class phpFlickr {
         }
         $url .= ".jpg";
         return $url;
+    }
+    
+    function sync_upload ($photo, $title = null, $description = null, $tags = null, $is_public = null, $is_friend = null, $is_family = null) {
+        $this->req->setURL($this->Upload);
+        $this->req->clearPostData();
+        
+        //Process arguments, including method and login data.
+        $args = array("api_key" => $this->api_key, "title" => $title, "description" => $description, "tags" => $tags, "is_public" => $is_public, "is_friend" => $is_friend, "is_family" => $is_family);
+        if (!empty($this->email)) {
+            $args = array_merge($args, array("email" => $this->email));
+        }
+        if (!empty($this->password)) {
+            $args = array_merge($args, array("password" => $this->password));
+        }
+        if (!empty($this->token)) {
+            $args = array_merge($args, array("auth_token" => $this->token));
+        } elseif (!empty($_SESSION['phpFlickr_auth_token'])) {
+            $args = array_merge($args, array("auth_token" => $_SESSION['phpFlickr_auth_token']));
+        }
+        
+        ksort($args);
+        $auth_sig = "";
+        foreach ($args as $key => $data) {
+            if ($data !== null) {
+                $auth_sig .= $key . $data;
+                $this->req->addPostData($key, $data);
+            }
+        }
+        if (!empty($this->secret)) {
+            $api_sig = md5($this->secret . $auth_sig);
+            $this->req->addPostData("api_sig", $api_sig);
+        }
+        
+        $photo = realpath($photo);
+
+        $result = $this->req->addFile("photo", $photo);
+
+        if (PEAR::isError($result)) {
+            die($result->getMessage());
+        }
+
+        //Send Requests
+        if ($this->req->sendRequest()) {
+            $this->response = $this->req->getResponseBody();
+        } else {
+            die("There has been a problem sending your command to the server.");
+        }
+        $result = $this->parse_response();
+        return $result['photoid'];
+    }
+    
+    function async_upload ($photo, $title = null, $description = null, $tags = null, $is_public = null, $is_friend = null, $is_family = null) {
+        $this->req->setURL($this->Upload);
+        $this->req->clearPostData();
+        
+        //Process arguments, including method and login data.
+        $args = array("async" => 1, "api_key" => $this->api_key, "title" => $title, "description" => $description, "tags" => $tags, "is_public" => $is_public, "is_friend" => $is_friend, "is_family" => $is_family);
+        if (!empty($this->email)) {
+            $args = array_merge($args, array("email" => $this->email));
+        }
+        if (!empty($this->password)) {
+            $args = array_merge($args, array("password" => $this->password));
+        }
+        if (!empty($this->token)) {
+            $args = array_merge($args, array("auth_token" => $this->token));
+        } elseif (!empty($_SESSION['phpFlickr_auth_token'])) {
+            $args = array_merge($args, array("auth_token" => $_SESSION['phpFlickr_auth_token']));
+        }
+        
+        ksort($args);
+        $auth_sig = "";
+        foreach ($args as $key => $data) {
+            if ($data !== null) {
+                $auth_sig .= $key . $data;
+                $this->req->addPostData($key, $data);
+            }
+        }
+        if (!empty($this->secret)) {
+            $api_sig = md5($this->secret . $auth_sig);
+            $this->req->addPostData("api_sig", $api_sig);
+        }
+        
+        $photo = realpath($photo);
+
+        $result = $this->req->addFile("photo", $photo);
+
+        if (PEAR::isError($result)) {
+            die($result->getMessage());
+        }
+
+        //Send Requests
+        if ($this->req->sendRequest()) {
+            $this->response = $this->req->getResponseBody();
+        } else {
+            die("There has been a problem sending your command to the server.");
+        }
+        $result = $this->parse_response();
+        return $result['ticketid'];
     }
     
     function auth ($perms = "read", $remember_uri = true)
@@ -894,6 +993,23 @@ class phpFlickr {
         $this->request("flickr.photos.transform.rotate", array("photo_id" => $photo_id, "degrees" => $degrees), TRUE);
         $this->parse_response();
         return true;
+    }
+    
+    /* Photos - Upload Methods */
+    function photos_upload_checkTickets($tickets) 
+    {
+        /* http://www.flickr.com/services/api/flickr.photos.upload.checkTickets.html */
+        if (is_array($tickets)) {
+            $tickets = implode(",", $tickets);
+        }
+        $this->request("flickr.photos.upload.checkTickets", array("tickets" => $tickets), TRUE);
+        $result = $this->parse_response();
+        if (!empty($result['uploader']['ticket']['id'])) {
+            $tmp = $result['uploader']['ticket'];
+            unset($result['uploader']['ticket']);
+            $result['uploader']['ticket'][] = $tmp;
+        }
+        return $result['uploader']['ticket'];
     }
     
     /* Photosets Methods */
