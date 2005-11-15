@@ -1,5 +1,5 @@
 <?php
-/* phpFlickr Class 1.4
+/* phpFlickr Class 1.4.1
  * Written by Dan Coulter (dan@dancoulter.com)
  * Sourceforge Project Page: http://www.sourceforge.net/projects/phpflickr/
  * Released under GNU General Public License (http://www.gnu.org/copyleft/gpl.html)
@@ -14,7 +14,9 @@
  *         http://sourceforge.net/forum/forum.php?forum_id=469652
  * 
  */
-session_start();
+if (session_id() == "") {
+    session_start();
+}
 require_once('xml.php');
 
 // Decide which include path delimiter to use.  Windows should be using a semi-colon
@@ -1084,10 +1086,10 @@ class phpFlickr {
         return $result;
     }
     
-    function photosets_getPhotos($photoset_id) 
+    function photosets_getPhotos($photoset_id, $extras) 
     {
         /* http://www.flickr.com/services/api/flickr.photosets.getPhotos.html */
-        $this->request("flickr.photosets.getPhotos", array("photoset_id" => $photoset_id));
+        $this->request("flickr.photosets.getPhotos", array("photoset_id" => $photoset_id, "extras" => $extras));
         $this->parse_response();
         $result = $this->parsed_response['rsp']['photoset'];
         if (!empty($result['photo']['id'])) {
