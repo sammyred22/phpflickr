@@ -125,7 +125,11 @@ class xml  {
             $ret['_value'] = $item['value'];
         }
         else {
-          $ret = array($item['tag']=> $item['value']);
+			if (isset($item['value'])) {
+				$ret = array($item['tag']=> $item['value']);
+			} else {
+				$ret = array($item['tag']=> "");
+			}
         }
         break;
     }
