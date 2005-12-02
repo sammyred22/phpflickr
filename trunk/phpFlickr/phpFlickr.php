@@ -604,13 +604,13 @@ class phpFlickr {
         return $result;
     }
     
-    function groups_pools_getPhotos ($group_id, $tags = NULL, $extras = NULL, $per_page = NULL, $page = NULL) 
+    function groups_pools_getPhotos ($group_id, $tags = NULL, $user_id = NULL, $extras = NULL, $per_page = NULL, $page = NULL) 
     {
-    /* http://www.flickr.com/services/api/flickr.groups.pools.getPhotos.html */
+		/* http://www.flickr.com/services/api/flickr.groups.pools.getPhotos.html */
         if (is_array($extras)) {
             $extras = implode(",", $extras);
         }
-        $this->request("flickr.groups.pools.getPhotos", array("group_id"=>$group_id, "tags"=>$tags, "extras"=>$extras, "per_page"=>$per_page, "page"=>$page));
+        $this->request("flickr.groups.pools.getPhotos", array("group_id"=>$group_id, "tags"=>$tags, "user_id"=>$user_id, "extras"=>$extras, "per_page"=>$per_page, "page"=>$page));
         $this->parse_response();
         $result = $this->parsed_response['rsp']['photos'];
         if (!empty($result['photo']['id'])) {
