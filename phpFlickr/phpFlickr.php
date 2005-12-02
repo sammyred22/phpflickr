@@ -259,7 +259,7 @@ class phpFlickr {
         //receives an array (can use the individual photo data returned 
         //from an API call) and returns a URL (doesn't mean that the 
         //file size exists)
-        $url = "http://photos" . $photo['server'] . ".flickr.com/" . $photo['id'] . "_" . $photo['secret'];
+        $url = "http://static.flickr.com/" . $photo['server'] . "/" . $photo['id'] . "_" . $photo['secret'];
         switch (strtolower($size)) {
             case "square":
                 $url .= "_s";
