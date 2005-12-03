@@ -2,6 +2,24 @@
 phpFlickr - Changelog
 ---------------------
 
+Version 1.4.1
+-------------
+
+2005-12-02 Dan Coulter  <dancoulter@users.sourceforge.net>
+    * phpFlickr.php: Added "user_id" parameter to the 
+      groups_pools_getPhotos() method.  Note, because of the 
+      placement in the Flickr API documentation, this make break 
+      some older applications.  The third parameter must be 
+      the user_id.
+	* phpFlickr.php: Changed buildPhotoURL() to use the new URL 
+	  scheme for photo files.
+	* xml.php: Fixed the bug that was causing an "undefined 
+	  index" notice. 
+	  
+2005-11-15 Dan Coulter  <dancoulter@users.sourceforge.net>
+	* phpFlickr.php: fixed a session bug and added the "extras" 
+	  parameter to photosets_getPhotos.
+
 Version 1.4
 -------------
 
