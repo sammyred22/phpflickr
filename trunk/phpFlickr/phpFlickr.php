@@ -153,7 +153,7 @@ class phpFlickr {
         $reqhash = md5(serialize($request));
         if ($this->cache == 'db') {
             $this->cache_db->query("DELETE FROM $this->cache_table WHERE request = '$reqhash'");
-            $sql = "INSERT INTO " . $this->cache_table . " (request, response, expiration) VALUES ('$reqhash', '" . str_replace("'", "''", $response) . "', '" . strftime("%Y-%m-%d %T") . "')";
+            $sql = "INSERT INTO " . $this->cache_table . " (request, response, expiration) VALUES ('$reqhash', '" . str_replace("'", "''", $response) . "', '" . strftime("%Y-%m-%d %H:%M:%S") . "')";
             $this->cache_db->query($sql);
         } elseif ($this->cache == "fs") {
             $file = $this->cache_dir . "/" . $reqhash . ".cache";
