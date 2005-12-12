@@ -33,7 +33,14 @@ if (strpos(__FILE__, ':') !== false) {
 // have them.  If you want to prefer the packaged files (there shouldn't be any reason
 // to), swap the two elements around the $path_delimiter variable.  If you don't have
 // the PEAR packages installed, you can leave this like it is and move on.
-ini_set('include_path', ini_get('include_path') . $path_delimiter . substr(__FILE__, 0, strrpos(__FILE__, '/')) . '/PEAR');
+
+ini_set('include_path', ini_get('include_path') . $path_delimiter . dirname(__FILE__) . '/PEAR');
+
+// If you have problems including the default PEAR install (like if your open_basedir
+// setting doesn't allow you to include files outside of your web root), comment out
+// the line above and uncomment the next line:
+
+// ini_set('include_path', dirname(__FILE__) . '/PEAR' . $path_delimiter . ini_get('include_path'));
 
 class phpFlickr {
     var $api_key;
