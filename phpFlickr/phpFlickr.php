@@ -707,7 +707,20 @@ class phpFlickr {
         $this->parse_response();
         return true;
     }
-    
+
+    function photos_delete($photo_id) 
+    {
+		/* 
+			This method is not listed in the API documentation or the reflection
+			methods.  Flickr may not want third party apps to use this, but it works
+			for now.  They might shut it off, which will break any apps depending on it.
+		*/
+        /* http://www.flickr.com/services/api/flickr.photos.delete.html */
+        $this->request("flickr.photos.delete", array("photo_id"=>$photo_id), TRUE);
+        $this->parse_response();
+        return true;
+    }
+
     function photos_getAllContexts ($photo_id) 
     {
         /* http://www.flickr.com/services/api/flickr.photos.getAllContexts.html */
