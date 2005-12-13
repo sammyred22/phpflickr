@@ -1,4 +1,4 @@
-phpFlickr Class 1.4.1
+phpFlickr Class 1.4.2
 Written by Dan Coulter (dancoulter@users.sourceforge.net)
 Project Homepage: http://www.phpflickr.com/
 Sourceforge Project Page: http://www.sourceforge.net/projects/phpflickr/
@@ -55,15 +55,12 @@ Installation instructions:
     for more information.
     
 Authentication:
-    As of this release of the phpFlickr class there are two authentication methods
-    available to the API.  One involves a somewhat complex authentication API and
-    the other is a depreciated method using the email address and password sent in
-    clear text.  Since they're both still in use, I haven't removed the second
-    method and I'll describe them both here.  Just because my class still supports
-    the old one doesn't mean that Flickr will forever.  When they shut it off, you 
-    will be forced to recode your application
+    As of this release of the phpFlickr class there is only one authentication method
+    available to the API.  This method is somewhat complex, but is far more secure and
+    allows your users to feel a little safer authenticating to your application.  You'll
+    no longer have to ask for their username and password.
     
-    1.  Authentication API - http://www.flickr.com/services/api/auth.spec.html
+    Authentication API - http://www.flickr.com/services/api/auth.spec.html
         
         I know how complicated this API looks at first glance, so I've tried to
         make this as transparent to the coding process.  I'll go through the steps
@@ -109,15 +106,6 @@ Authentication:
             This token never expires, so you don't have to worry about having to
             login periodically.
             
-    2.  Login with email/password (depreciated).
-        
-        This method is far simpler, but is depreciated and Flickr has promised that
-        they'll shut it off sooner or later, so you probably don't want to use it.
-        Whether you're using your login or someone else's just call:
-            $f->login("<email address>", "<password>");
-        Any calls made after that will be authenticated with the given user.  Bear
-        in mind that this method is very insecure and should probably not be used,
-        if only for that reason.
 
 Using Caching:
     Caching can be very important to a project.  Just a few calls to the Flickr API
