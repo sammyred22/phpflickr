@@ -544,9 +544,6 @@ class phpFlickr {
     function favorites_remove($photo_id) 
     {
         /* http://www.flickr.com/services/api/flickr.favorites.remove.html */
-        if (is_array($extras)) {
-            $extras = implode(",", $extras);
-        }
         $this->request("flickr.favorites.remove", array("photo_id"=>$photo_id), TRUE);
         $this->parse_response();
         return true;
