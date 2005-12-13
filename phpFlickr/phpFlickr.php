@@ -1,5 +1,5 @@
 <?php
-/* phpFlickr Class 1.4.1
+/* phpFlickr Class 1.4.2
  * Written by Dan Coulter (dan@dancoulter.com)
  * Sourceforge Project Page: http://www.sourceforge.net/projects/phpflickr/
  * Released under GNU General Public License (http://www.gnu.org/copyleft/gpl.html)
@@ -19,7 +19,7 @@ if (session_id() == "") {
 }
 require_once('xml.php');
 
-// Decide which include path delimiter to use.  Windows should be using a semi-colon
+// Decides which include path delimiter to use.  Windows should be using a semi-colon
 // and everything else should be using a colon.  If this isn't working on your system,
 // comment out this if statement and manually set the correct value into $path_delimiter.
 if (strpos(__FILE__, ':') !== false) {
