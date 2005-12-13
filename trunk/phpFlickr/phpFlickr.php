@@ -51,8 +51,6 @@ class phpFlickr {
     var $req;
     var $response;
     var $parsed_response;
-    var $email;
-    var $password;
     var $cache = false;
     var $cache_db = null;
     var $cache_table = null;
@@ -79,14 +77,6 @@ class phpFlickr {
         
         //setup XML parser using Aaron Colflesh's XML class.
         $this->xml_parser = new xml(false, true, true);
-    }
-    
-    function login($email = NULL, $password = NULL)
-    {
-        //Sets login information and tests the login.
-        $this->email = $email;
-        $this->password = $password;
-        return $this->test_login();
     }
     
     function enableCache($type, $connection, $cache_expire = 600, $table = 'flickr_cache') 
@@ -183,12 +173,6 @@ class phpFlickr {
         
         //Process arguments, including method and login data.
         $args = array_merge(array("method" => $command, "api_key" => $this->api_key), $args);
-        if (!empty($this->email)) {
-            $args = array_merge($args, array("email" => $this->email));
-        }
-        if (!empty($this->password)) {
-            $args = array_merge($args, array("password" => $this->password));
-        }
         if (!empty($this->token)) {
             $args = array_merge($args, array("auth_token" => $this->token));
         } elseif (!empty($_SESSION['phpFlickr_auth_token'])) {
@@ -710,11 +694,6 @@ class phpFlickr {
 
     function photos_delete($photo_id) 
     {
-		/* 
-			This method is not listed in the API documentation or the reflection
-			methods.  Flickr may not want third party apps to use this, but it works
-			for now.  They might shut it off, which will break any apps depending on it.
-		*/
         /* http://www.flickr.com/services/api/flickr.photos.delete.html */
         $this->request("flickr.photos.delete", array("photo_id"=>$photo_id), TRUE);
         $this->parse_response();
