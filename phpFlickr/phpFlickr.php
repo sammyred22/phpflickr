@@ -1082,7 +1082,7 @@ class phpFlickr {
         return $result;
     }
     
-    function photosets_getPhotos($photoset_id, $extras) 
+    function photosets_getPhotos($photoset_id, $extras = NULL) 
     {
         /* http://www.flickr.com/services/api/flickr.photosets.getPhotos.html */
         $this->request("flickr.photosets.getPhotos", array("photoset_id" => $photoset_id, "extras" => $extras));
