@@ -26,8 +26,8 @@ class xml  {
    
    var $caseInsensitive = false;
    
-   var $_replace = array('°','&',"\n");
-   var $_replaceWith = array('{deg}', '{amp}', '{lf}');
+   var $_replace = array('°','&',"\n","");
+   var $_replaceWith = array('{deg}', '{amp}', '{lf}','{ESC}');
 
    function xml($caseInsensitive = false, $attributesDirectlyUnderParent = false, $childTagsDirectlyUnderParent = false)
    {
