@@ -1,5 +1,5 @@
 <?php
-/* phpFlickr Class 1.4.2
+/* phpFlickr Class 1.4.3
  * Written by Dan Coulter (dan@dancoulter.com)
  * Sourceforge Project Page: http://www.sourceforge.net/projects/phpflickr/
  * Released under GNU General Public License (http://www.gnu.org/copyleft/gpl.html)
@@ -522,7 +522,7 @@ class phpFlickr {
             unset($result['photo']);
             $result['photo'][] = $tmp;
         }
-        return $result['photo'];
+        return $result;
     }
     
     function favorites_remove($photo_id) 
