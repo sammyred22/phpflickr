@@ -505,7 +505,7 @@ class phpFlickr {
             unset($result['photo']);
             $result['photo'][] = $tmp;
         }
-        return $result['photo'];
+        return $result;
     }
     
     function favorites_getPublicList($user_id = NULL, $extras = NULL, $per_page = NULL, $page = NULL) 
