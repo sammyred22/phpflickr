@@ -5,6 +5,22 @@ phpFlickr - Changelog
 Version 1.4.2
 -------------
 
+2006-01-05 Dan Coulter  <dancoulter@users.sourceforge.net>
+    * phpFlickr.php: Added interestingness_getList() method.
+        Fixed a bug in favorites_getPublicList() that made it
+        return less data than it should have.  Note: This
+        means that you need to adjust any calls to this function.
+	* xml.php: Added Escape character to replacements so that the 
+		XML parser will not barf.
+
+2005-12-16 Dan Coulter  <dancoulter@users.sourceforge.net>
+    * phpFlickr.php: Fixed a bug in photosets_getPhotos() 
+        definition.
+
+
+Version 1.4.2
+-------------
+
 2005-12-13 Dan Coulter  <dancoulter@users.sourceforge.net>
     * phpFlickr.php: Removed extra useless code from 
         favorites_remove().  
