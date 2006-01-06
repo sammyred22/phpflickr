@@ -617,6 +617,25 @@ class phpFlickr {
         return true;
     }
     
+    /* Interestingness methods */
+	function interestingness_getList($date = NULL, $extras = NULL, $per_page = NULL, $page = NULL) 
+	{
+        /* http://www.flickr.com/services/api/flickr.interestingness.getList.html */
+        if (is_array($extras)) { 
+            $extras = implode(",", $extras); 
+        }
+        
+        $this->request("flickr.interestingness.getList", array("date"=>$date, "extras"=>$extras, "per_page"=>$per_page, "page"=>$page));
+        $this->parse_response();
+        $result = $this->parsed_response['rsp']['photos'];
+        if (!empty($result['photo']['id'])) {
+            $tmp = $result['photo'];
+            unset($result['photo']);
+            $result['photo'][] = $tmp;
+        }
+        return $result;
+    }
+
     /* People methods */
     function people_findByEmail ($find_email) 
     {
