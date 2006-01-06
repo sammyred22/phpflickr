@@ -2,7 +2,7 @@
 class xml  {
    /** Written by Aaron Colflesh **/
 
-   /** Updated with phpFlickr 1.3.2 **/
+   /** Updated with phpFlickr 1.4.3 **/
 
    /** If attributesDirectlyUnderParent is true then a tag's attributes will be merged into
      * the tag itself rather than under the special '_attributes' key.
