@@ -8,7 +8,7 @@ visit http://www.phpflickr.com/ or http://www.sourceforge.net/projects/phpflickr
 
 Installation instructions:
 1.  You have to be sure that you have the php PEAR prereq packages installed. The 
-    only one you absolutely need is HTTP_Response. If you want to do any caching, 
+    only one you absolutely need is HTTP_Request. If you want to do any caching, 
     you'll also need to install the DB package.
 
     NOTE: If you have installed version 1.3.1 of phpFlickr or later with the prereqs 
