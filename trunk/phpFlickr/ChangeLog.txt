@@ -2,7 +2,18 @@
 phpFlickr - Changelog
 ---------------------
 
-Version 1.4.2
+Version 1.5
+-------------
+
+2006-02-15 Dan Coulter  <dancoulter@users.sourceforge.net>
+    * phpFlickr.php: Implemented support for 23's compatible API.
+        Implemented flickr.groups.search method.  Fixed bug in
+        filesystem caching for PHP versions older than 4.3.0.
+        Stopped caching from changing the working directory.
+        Included support for HTTP proxy servers.
+
+
+Version 1.4.3
 -------------
 
 2006-01-05 Dan Coulter  <dancoulter@users.sourceforge.net>
