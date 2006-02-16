@@ -1,5 +1,5 @@
 <?php
-/* phpFlickr Class 1.4.3
+/* phpFlickr Class 1.5
  * Written by Dan Coulter (dan@dancoulter.com)
  * Sourceforge Project Page: http://www.sourceforge.net/projects/phpflickr/
  * Released under GNU General Public License (http://www.gnu.org/copyleft/gpl.html)
@@ -60,7 +60,8 @@ class phpFlickr {
     var $error_code;
     Var $error_msg;
     var $token;
-    
+    var $php_version;
+    var $service;
     
     function phpFlickr ($api_key, $secret = NULL, $die_on_error = true) 
     {
@@ -69,6 +70,11 @@ class phpFlickr {
         $this->api_key = $api_key;
         $this->secret = $secret;
         $this->die_on_error = $die_on_error;
+        $this->service = "flickr";
+        
+        //Find the PHP version and store it for future reference
+        $this->php_version = explode("-", phpversion());
+        $this->php_version = explode(".", $this->php_version[0]);
         
         //All calls to the API are done via the POST method using the PEAR::HTTP_Request package.
         require_once 'HTTP/Request.php';
@@ -111,12 +117,12 @@ class phpFlickr {
             $this->cache_table = $table;
         } elseif ($type = 'fs') {
             $this->cache = 'fs';
-            chdir($connection);
-            $this->cache_dir = getcwd();
-            if ($dir = opendir('./')) {
+            $connection = realpath($connection);
+            $this->cache_dir = $connection;
+            if ($dir = opendir($this->cache_dir)) {
                 while ($file = readdir($dir)) {
-                    if (substr($file, -6) == '.cache' && ((filemtime($file) + $cache_expire) < time()) ) {
-                        unlink($file);
+                    if (substr($file, -6) == '.cache' && ((filemtime($this->cache_dir . '/' . $file) + $cache_expire) < time()) ) {
+                        unlink($this->cache_dir . '/' . $file);
                     }
                 }
             }
@@ -138,7 +144,11 @@ class phpFlickr {
         } elseif ($this->cache == 'fs') {
             $file = $this->cache_dir . '/' . $reqhash . '.cache';
             if (file_exists($file)) {
-                return file_get_contents($file);
+				if ($this->php_version[0] > 4 || ($this->php_version[0] == 4 && $this->php_version[1] >= 3)) {
+					return file_get_contents($file);
+				} else {
+					return implode('', file($file));
+				}
             }
         }
         return false;
@@ -224,9 +234,33 @@ class phpFlickr {
         return $this->parsed_response['rsp'];
     }
     
-    function setToken($token) {
+    function setService($service)
+    {
+		// Sets which service to connect to.  Currently supported services are
+		// "flickr" and "23"
+		if ($service == "23") {
+			$this->service = "23";
+			$this->REST = 'http://www.23hq.com/services/rest/';
+			$this->Upload = 'http://www.23hq.com/services/upload/';
+		} elseif (strtolower($service) == "flickr") {
+			$this->service = "flickr";
+			$this->REST = 'http://www.flickr.com/services/rest/';
+			$this->Upload = 'http://www.flickr.com/services/upload/';
+		} else {
+			die ("You have entered a service that does not exist or is not supported at this time.");
+		}
+    }
+    
+    function setToken($token) 
+    {
         // Sets an authentication token to use instead of the session variable
         $this->token = $token;
+    }
+    
+    function setProxy($server, $port) 
+    {
+        // Sets the proxy for all phpFlickr calls.
+        $this->req->setProxy($server, $port);
     }
     
     function getErrorCode() 
@@ -250,7 +284,12 @@ class phpFlickr {
         //receives an array (can use the individual photo data returned 
         //from an API call) and returns a URL (doesn't mean that the 
         //file size exists)
-        $url = "http://static.flickr.com/" . $photo['server'] . "/" . $photo['id'] . "_" . $photo['secret'];
+		if ($this->service == "23") {
+			$url = "http://www.23hq.com/";
+		} else {
+			$url = "http://static.flickr.com/";
+        }
+        $url .= $photo['server'] . "/" . $photo['id'] . "_" . $photo['secret'];
         switch (strtolower($size)) {
             case "square":
                 $url .= "_s";
@@ -384,7 +423,11 @@ class phpFlickr {
                 $redirect = $_SERVER['REQUEST_URI'];
             }
             $api_sig = md5($this->secret . "api_key" . $this->api_key . "extra" . $redirect . "perms" . $perms);
-            header("Location: http://flickr.com/services/auth/?api_key=" . $this->api_key . "&extra=" . $redirect . "&perms=" . $perms . "&api_sig=". $api_sig);
+			if ($this->service == "23") {
+				header("Location: http://www.23hq.com/services/auth/?api_key=" . $this->api_key . "&extra=" . $redirect . "&perms=" . $perms . "&api_sig=". $api_sig);
+			} else {
+				header("Location: http://www.flickr.com/services/auth/?api_key=" . $this->api_key . "&extra=" . $redirect . "&perms=" . $perms . "&api_sig=". $api_sig);
+			}
             exit;
         } else {
             $tmp = $this->die_on_error;
@@ -616,6 +659,20 @@ class phpFlickr {
         $this->parse_response();
         return true;
     }
+    
+	function groups_search ($text, $per_page=NULL, $page=NULL)
+	{
+		/* http://www.flickr.com/services/api/flickr.groups.search.html */
+		$this->request("flickr.groups.search", array("text"=>$text,"per_page"=>$per_page,"page"=>$page));
+		$this->parse_response();
+		$result = $this->parsed_response['rsp']['groups'];
+		if (!empty($result['group']['nsid'])) {
+			$tmp = $result['group'];
+			unset($result['group']);
+			$result['group'][] = $tmp;
+		}
+		return $result;
+	}
     
     /* Interestingness methods */
 	function interestingness_getList($date = NULL, $extras = NULL, $per_page = NULL, $page = NULL) 
