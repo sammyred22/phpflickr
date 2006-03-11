@@ -1031,7 +1031,7 @@ class phpFlickr {
     {
         /* http://www.flickr.com/services/api/flickr.photos.licenses.setLicense.html */
         /* Requires Authentication */
-        $this->request("flickr.photos.licenses.setLicense", array("photo_id"=>$photo_ID, "license_id"=>$license_id), TRUE);
+        $this->request("flickr.photos.licenses.setLicense", array("photo_id"=>$photo_id, "license_id"=>$license_id), TRUE);
         $this->parse_response();
         return true;
     }
