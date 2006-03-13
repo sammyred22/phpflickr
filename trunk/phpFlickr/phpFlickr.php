@@ -882,13 +882,13 @@ class phpFlickr {
         return $result;
     }
     
-    function photos_getNotInSet($extras = NULL, $per_page = NULL, $page = NULL)
+    function photos_getNotInSet($min_upload_date = NULL, $max_upload_date = NULL, $min_taken_date = NULL, $max_taken_date = NULL, $extras = NULL, $per_page = NULL, $page = NULL) 
     {
         /* http://www.flickr.com/services/api/flickr.photos.getNotInSet.html */
         if (is_array($extras)) {
             $extras = implode(",", $extras);
         }
-        $this->request("flickr.photos.getNotInSet", array("extras"=>$extras, "per_page"=>$per_page, "page"=>$page));
+        $this->request("flickr.photos.getNotInSet", array("min_upload_date"=>$min_upload_date, "max_upload_date"=>$max_upload_date, "min_taken_date"=>$min_taken_date, "max_taken_date"=>$max_taken_date, "extras"=>$extras, "per_page"=>$per_page, "page"=>$page));
         $this->parse_response();
         $result = $this->parsed_response['rsp']["photos"];
         if (!empty($result['photo']['id'])) {
@@ -936,13 +936,13 @@ class phpFlickr {
         return $result;
     }
     
-    function photos_getUntagged($extras = NULL, $per_page = NULL, $page = NULL) 
+    function photos_getUntagged($min_upload_date = NULL, $max_upload_date = NULL, $min_taken_date = NULL, $max_taken_date = NULL, $extras = NULL, $per_page = NULL, $page = NULL) 
     {
         /* http://www.flickr.com/services/api/flickr.photos.getUntagged.html */
         if (is_array($extras)) { 
             $extras = implode(",", $extras); 
         }
-        $this->request("flickr.photos.getUntagged", array("extras"=>$extras, "per_page"=>$per_page, "page"=>$page));
+        $this->request("flickr.photos.getUntagged", array("min_upload_date"=>$min_upload_date, "max_upload_date"=>$max_upload_date, "min_taken_date"=>$min_taken_date, "max_taken_date"=>$max_taken_date, "extras"=>$extras, "per_page"=>$per_page, "page"=>$page));
         $this->parse_response();
         $result = $this->parsed_response['rsp']['photos'];
         if (!empty($result['photo']['id'])) {
