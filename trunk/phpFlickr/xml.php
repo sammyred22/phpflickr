@@ -2,7 +2,7 @@
 class xml  {
    /** Written by Aaron Colflesh **/
 
-   /** Updated with phpFlickr 1.4.3 **/
+   /** Updated with phpFlickr 1.5.1 **/
 
    /** If attributesDirectlyUnderParent is true then a tag's attributes will be merged into
      * the tag itself rather than under the special '_attributes' key.
@@ -26,8 +26,8 @@ class xml  {
    
    var $caseInsensitive = false;
    
-   var $_replace = array('°','&',"\n","");
-   var $_replaceWith = array('{deg}', '{amp}', '{lf}','{ESC}');
+   var $_replace = array('°','&',"\n","", "Â");
+   var $_replaceWith = array('{deg}', '{amp}', '{lf}','{ESC}', "&#194;");
 
    function xml($caseInsensitive = false, $attributesDirectlyUnderParent = false, $childTagsDirectlyUnderParent = false)
    {
