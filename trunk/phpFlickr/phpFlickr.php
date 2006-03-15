@@ -1,5 +1,5 @@
 <?php
-/* phpFlickr Class 1.5
+/* phpFlickr Class 1.5.1
  * Written by Dan Coulter (dan@dancoulter.com)
  * Sourceforge Project Page: http://www.sourceforge.net/projects/phpflickr/
  * Released under GNU General Public License (http://www.gnu.org/copyleft/gpl.html)
@@ -1018,6 +1018,21 @@ class phpFlickr {
         return true;
     }
     
+    /* Photos - Comments Methods */
+    function photos_comments_getList($photo_id) 
+    {
+        /* http://www.flickr.com/services/api/flickr.photos.comments.getList.html */
+        $this->request("flickr.photos.comments.getList", array("photo_id"=>$photo_id));
+        $this->parse_response();
+        $result = $this->parsed_response['rsp']['comments'];
+        if (!empty($result['comment']['id'])) {
+            $tmp = $result['comment'];
+            unset($result['comment']);
+            $result['comment'][] = $tmp;
+        }
+        return $result['comment'];
+    }
+
     /* Photos - Notes Methods */
     function photos_licenses_getInfo() 
     {
