@@ -442,6 +442,27 @@ class phpFlickr {
         }
     }
     
+    /*******************************
+    
+    To use the phpFlickr::call method, pass a string containing the API method you want
+    to use and an associative array of arguments.  For example:
+        $result = $f->call("flickr.photos.comments.getList", array("photo_id"=>'34952612'));
+    This method will allow you to make calls to arbitrary methods that haven't been
+    implemented in phpFlickr yet.  This will be especially useful if 23 expands their
+    API beyond the Flickr functionality and I don't expand my support.  You need to
+    be careful though; if you call a method that returns a list of items (tags on a photo
+    or comments, for example) and there is only one item in the list, the XML parser won't 
+    return the element as an array.  You'll need to code that in after you get the result
+    back.  One example of this is in blogs_getList().
+    
+    *******************************/
+    
+    function call($method, $arguments)
+    {
+        $this->request($method, $arguments);
+        return $this->parse_response();
+    }
+    
     /* 
         These functions are the direct implementations of flickr calls.
         For method documentation, including arguments, visit the address
