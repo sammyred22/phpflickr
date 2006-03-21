@@ -2,6 +2,15 @@
 phpFlickr - Changelog
 ---------------------
 
+Version 1.5.1
+-------------
+
+2006-03-13 Dan Coulter  <dancoulter@users.sourceforge.net>
+    * phpFlickr.php: Added support for flickr.photos.comments.getList
+    
+2006-03-11 Dan Coulter  <dancoulter@users.sourceforge.net>
+    * phpFlickr.php: Fixed a bug in photos_licenses_setLicense()
+
 Version 1.5
 -------------
 
