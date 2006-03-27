@@ -1,6 +1,6 @@
 <?php
 class xml  {
-   /** Written by Aaron Colflesh **/
+   /** Written by Aaron Colflesh: acolflesh@users.sourceforge.net **/
 
    /** Updated with phpFlickr 1.5.1 **/
 
