@@ -526,7 +526,7 @@ class phpFlickr {
         $this->request('flickr.contacts.getList', array('filter'=>$filter));
         $this->parse_response();
         $result = $this->parsed_response['rsp']['contacts'];
-        if (!empty($result['contact']['id'])) {
+        if (!empty($result['contact']['nsid'])) {
             $tmp = $result['contact'];
             unset($result['contact']);
             $result['contact'][] = $tmp;
@@ -540,7 +540,7 @@ class phpFlickr {
         $this->request('flickr.contacts.getPublicList', array('user_id'=>$user_id));
         $this->parse_response();
         $result = $this->parsed_response['rsp']['contacts'];
-        if (!empty($result['contact']['id'])) {
+        if (!empty($result['contact']['nsid'])) {
             $tmp = $result['contact'];
             unset($result['contact']);
             $result['contact'][] = $tmp;
