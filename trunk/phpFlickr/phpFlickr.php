@@ -1194,10 +1194,10 @@ class phpFlickr {
         return $result;
     }
     
-    function photosets_getPhotos($photoset_id, $extras = NULL) 
+    function photosets_getPhotos($photoset_id, $extras = NULL, $privacy_filter = NULL) 
     {
         /* http://www.flickr.com/services/api/flickr.photosets.getPhotos.html */
-        $this->request("flickr.photosets.getPhotos", array("photoset_id" => $photoset_id, "extras" => $extras));
+        $this->request("flickr.photosets.getPhotos", array("photoset_id" => $photoset_id, "extras" => $extras, "privacy_filter" => $privacy_filter));
         $this->parse_response();
         $result = $this->parsed_response['rsp']['photoset'];
         if (!empty($result['photo']['id'])) {
