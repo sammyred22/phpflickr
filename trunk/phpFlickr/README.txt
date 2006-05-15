@@ -1,4 +1,4 @@
-phpFlickr Class 1.5
+phpFlickr Class 1.5.2
 Written by Dan Coulter (dancoulter@users.sourceforge.net)
 Project Homepage: http://www.phpflickr.com/
 Sourceforge Project Page: http://www.sourceforge.net/projects/phpflickr/
@@ -46,7 +46,7 @@ Installation instructions:
     remove the "flickr." part of the name and replace any periods with underscores.
     For example, instead of flickr.photos.search, you would call $f->photos_search()
     or instead of flickr.photos.licenses.getInfo, you would call
-    $f->photos_licenses.getInfo() (yes, it is case sensitive).
+    $f->photos_licenses_getInfo() (yes, it is case sensitive).
     All functions have their arguments implemented in the list order on their
     documentation page (a link to which is included with each function in the clasS).
     The only exception to this is photos_search() which has so many optional arguments

@@ -2,6 +2,18 @@
 phpFlickr - Changelog
 ---------------------
 
+Version 1.5.2
+-------------
+
+2006-05-07 Dan Coulter  <dancoulter@users.sourceforge.net>
+    * phpFlickr.php: Added privacy_filter parameter to 
+        photosets_getPhotos().
+
+2006-03-13 Dan Coulter  <dancoulter@users.sourceforge.net>
+    * phpFlickr.php: Fixed bugs in contacts_getList and 
+        contacts_getPublicList when they are returned with one 
+        result.
+
 Version 1.5.1
 -------------
 
