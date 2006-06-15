@@ -1,5 +1,5 @@
 <?php
-/* phpFlickr Class 1.5.2
+/* phpFlickr Class 1.5.3
  * Written by Dan Coulter (dan@dancoulter.com)
  * Sourceforge Project Page: http://www.sourceforge.net/projects/phpflickr/
  * Released under GNU General Public License (http://www.gnu.org/copyleft/gpl.html)
@@ -47,6 +47,7 @@ class phpFlickr {
     var $secret;
     var $REST = 'http://www.flickr.com/services/rest/';
     var $Upload = 'http://www.flickr.com/services/upload/';
+    var $Replace = 'http://www.flickr.com/services/replace/';
     var $xml_parser;
     var $req;
     var $response;
@@ -242,10 +243,12 @@ class phpFlickr {
 			$this->service = "23";
 			$this->REST = 'http://www.23hq.com/services/rest/';
 			$this->Upload = 'http://www.23hq.com/services/upload/';
+			$this->Replace = 'http://www.23hq.com/services/replace/';
 		} elseif (strtolower($service) == "flickr") {
 			$this->service = "flickr";
 			$this->REST = 'http://www.flickr.com/services/rest/';
 			$this->Upload = 'http://www.flickr.com/services/upload/';
+			$this->Replace = 'http://www.flickr.com/services/replace/';
 		} else {
 			die ("You have entered a service that does not exist or is not supported at this time.");
 		}
@@ -412,6 +415,56 @@ class phpFlickr {
         return $result['ticketid'];
     }
     
+    // Interface for new replace API method.
+    function replace ($photo, $photo_id, $async = null) {
+        $this->req->setURL($this->Replace);
+        $this->req->clearPostData();
+        
+        //Process arguments, including method and login data.
+        $args = array("api_key" => $this->api_key, "photo_id" => $photo_id, "async" => $async);
+        if (!empty($this->email)) {
+            $args = array_merge($args, array("email" => $this->email));
+        }
+        if (!empty($this->password)) {
+            $args = array_merge($args, array("password" => $this->password));
+        }
+        if (!empty($this->token)) {
+            $args = array_merge($args, array("auth_token" => $this->token));
+        } elseif (!empty($_SESSION['phpFlickr_auth_token'])) {
+            $args = array_merge($args, array("auth_token" => $_SESSION['phpFlickr_auth_token']));
+        }
+        
+        ksort($args);
+        $auth_sig = "";
+        foreach ($args as $key => $data) {
+            if ($data !== null) {
+                $auth_sig .= $key . $data;
+                $this->req->addPostData($key, $data);
+            }
+        }
+        if (!empty($this->secret)) {
+            $api_sig = md5($this->secret . $auth_sig);
+            $this->req->addPostData("api_sig", $api_sig);
+        }
+        
+        $photo = realpath($photo);
+
+        $result = $this->req->addFile("photo", $photo);
+
+        if (PEAR::isError($result)) {
+            die($result->getMessage());
+        }
+
+        //Send Requests
+        if ($this->req->sendRequest()) {
+            $this->response = $this->req->getResponseBody();
+        } else {
+            die("There has been a problem sending your command to the server.");
+        }
+        $result = $this->parse_response();
+        return $result['photoid'];
+    }
+
     function auth ($perms = "read", $remember_uri = true)
     {
         // Redirects to Flickr's authentication piece if there is no valid token.

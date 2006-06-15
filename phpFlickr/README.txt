@@ -1,4 +1,4 @@
-phpFlickr Class 1.5.2
+phpFlickr Class 1.5.3
 Written by Dan Coulter (dancoulter@users.sourceforge.net)
 Project Homepage: http://www.phpflickr.com/
 Sourceforge Project Page: http://www.sourceforge.net/projects/phpflickr/
@@ -167,6 +167,15 @@ Uploading
         is_public: Set to 0 for no, 1 for yes.
         is_friend: Set to 0 for no, 1 for yes.
         is_family: Set to 0 for no, 1 for yes.
+        
+Replacing Photos
+    Flickr has released API support for uploading a replacement photo.  To use this
+    new method, just use the "replace" function in phpFlickr.  You'll be required
+    to pass the file name and Flickr's photo ID.  You need to authenticate your script
+    with "write" permissions before you can replace a photo.  The arguments are:
+        Photo: The path of the file to upload.
+        Photo ID: The numeric Flickr ID of the photo you want to replace.
+        Async (optional): Set to 0 for a synchronous call, 1 for asynchronous.
 
 Other Notes:
     1.  Many of the methods have optional arguments.  For these, I have implemented 
