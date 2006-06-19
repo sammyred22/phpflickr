@@ -1,9 +1,73 @@
 <?php
+    /*
+     * Written by Aaron Colflesh: acolflesh@users.sourceforge.net
+     * Released under the LGPL License: http://www.gnu.org/licenses/lgpl.html
+     *
+     * Modified by Dan Coulter: dancoulter@users.sourceforge.net
+     * This version was modified to replace the built in PHP XML Parsing functions.
+     */
+
+   /** Updated with phpFlickr 1.6 **/
+
+require_once("xml_saxy_parser.php");
+
+class SAXY_Custom  {
+
+    var $result;
+    var $sp;
+
+    function SAXY_Custom() {
+        $this->sp = new SAXY_Parser();
+        $this->result = array();
+        $this->sp->xml_set_element_handler(array(&$this, "startElement"), array(&$this, "endElement"));
+        $this->sp->xml_set_character_data_handler(array(&$this, "charData"));
+    }
+    
+    function parse($xml)
+    {
+        $this->sp->parse($xml);
+        return $this->sp->endElementHandler[0]->result;
+    }
+    
+    function startElement($parser, $name, $attributes) {
+        $this->level++;
+        $tmp = array();
+        $tmp['tag'] = $name;
+        $tmp['type'] = 'open';
+        $tmp['level'] = $this->level;
+        $tmp['attributes'] = $attributes;
+        $this->result[] = $tmp;
+
+    } 
+    
+    function endElement($parser, $name) {
+        $tmp = array_pop($this->result);
+        if ($tmp['type'] == 'complete' && $tmp['tag'] == $name) {
+            $this->result[] = $tmp;
+        } elseif ($tmp['type'] == 'open' && $tmp['tag'] == $name) {
+            $tmp['type'] = 'complete';
+            $this->result[] = $tmp;
+        } else {
+            $this->result[] = $tmp;
+            $tmp = array();
+            $tmp['type'] = 'close';
+            $tmp['tag'] = $name;
+            $tmp['level'] = $this->level;
+            $this->result[] = $tmp;
+        }
+        $this->level--;
+    } 
+    
+    function charData($parser, $text) {
+        $tmp = array_pop($this->result);
+        $tmp['type'] = 'complete';
+        $tmp['value'] = $text;
+        $this->result[] = $tmp;
+    }
+    
+} 
+	
 class xml  {
-   /** Written by Aaron Colflesh: acolflesh@users.sourceforge.net **/
-
-   /** Updated with phpFlickr 1.5.3 **/
-
    /** If attributesDirectlyUnderParent is true then a tag's attributes will be merged into
      * the tag itself rather than under the special '_attributes' key.
      * For example: 
@@ -26,8 +90,10 @@ class xml  {
    
    var $caseInsensitive = false;
 
-   var $_replace = array('°','&',"\n","", "Â","£");
-   var $_replaceWith = array('{deg}', '{amp}', '{lf}','{ESC}', "&#194;","{GBP}");
+   //var $_replace = array('°','&',"\n","", "Â","£");
+   //var $_replaceWith = array('{deg}', '{amp}', '{lf}','{ESC}', "&#194;","{GBP}");
+   var $_replace = array();
+   var $_replaceWith = array();
 
    function xml($caseInsensitive = false, $attributesDirectlyUnderParent = false, $childTagsDirectlyUnderParent = false)
    {
@@ -38,6 +104,7 @@ class xml  {
    
    function parse($xml)
    {
+    /* This is the original code that uses PHP's crappy XML functions.
        $this->_parser = xml_parser_create();
        
        $this->input = $xml;
@@ -50,7 +117,13 @@ class xml  {
        xml_parser_set_option($this->_parser, XML_OPTION_SKIP_WHITE, 1);
        
        xml_parse_into_struct($this->_parser, $xml, $this->_struct, $this->_index);
-       
+      //*/
+
+       //* This is the replacement code that uses the SAXY Parser class I defined above.
+       $this->_parser = new SAXY_Custom;
+       $this->_struct = $this->_parser->parse($xml);
+       //*/
+
        $this->parsed = $this->_postProcess($this->_struct);
        $this->parsed = array($this->parsed['_name']=>$this->parsed);
        

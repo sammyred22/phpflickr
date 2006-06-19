@@ -2,12 +2,24 @@
 phpFlickr - Changelog
 ---------------------
 
+Version 1.6
+-----------
+
+2006-06-19 Dan Coulter  <dancoulter@users.sourceforge.net>
+    * xml.php: Replaced PHP's XML functions with the SAXY_Parser
+        class to remove the problems with unusual characters that
+        PHP's functions created.
+        
+2006-06-15 Dan Coulter <dancoulter@users.sourceforge.net>
+    * phpFlickr.php: Added support for the new photo replacement API.
+
 Version 1.5.2
 -------------
 
 2006-05-07 Dan Coulter  <dancoulter@users.sourceforge.net>
     * phpFlickr.php: Added privacy_filter parameter to 
         photosets_getPhotos().
+
 
 2006-03-13 Dan Coulter  <dancoulter@users.sourceforge.net>
     * phpFlickr.php: Fixed bugs in contacts_getList and 
@@ -24,7 +36,7 @@ Version 1.5.1
     * phpFlickr.php: Fixed a bug in photos_licenses_setLicense()
 
 Version 1.5
--------------
+-----------
 
 2006-02-15 Dan Coulter  <dancoulter@users.sourceforge.net>
     * phpFlickr.php: Implemented support for 23's compatible API.
