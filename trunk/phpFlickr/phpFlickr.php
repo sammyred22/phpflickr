@@ -1,5 +1,5 @@
 <?php
-/* phpFlickr Class 1.6-beta
+/* phpFlickr Class 1.6
  * Written by Dan Coulter (dan@dancoulter.com)
  * Sourceforge Project Page: http://www.sourceforge.net/projects/phpflickr/
  * Released under GNU General Public License (http://www.gnu.org/copyleft/gpl.html)
@@ -264,6 +264,10 @@ class phpFlickr {
     {
         // Sets the proxy for all phpFlickr calls.
         $this->req->setProxy($server, $port);
+    }
+    
+    function useSAXY($useIt = true) {
+        $this->xml_parser->useSAXY($useIt);
     }
     
     function getErrorCode() 
@@ -539,6 +543,14 @@ class phpFlickr {
         return $result['frob'];
     }
     
+    function auth_getFullToken ($mini_token) 
+    {
+        /* http://www.flickr.com/services/api/flickr.auth.getFullToken.html */
+        $this->request('flickr.auth.getFullToken', array('mini_token'=>$mini_token));
+        $result = $this->parse_response();
+        return $result['auth'];
+    }
+    
     function auth_getToken ($frob) 
     {
         /* http://www.flickr.com/services/api/flickr.auth.getToken.html */
@@ -678,7 +690,21 @@ class phpFlickr {
         return $this->parsed_response['rsp']["group"];
     }
     
-    /* Groups Methods */
+	function groups_search ($text, $per_page=NULL, $page=NULL)
+	{
+		/* http://www.flickr.com/services/api/flickr.groups.search.html */
+		$this->request("flickr.groups.search", array("text"=>$text,"per_page"=>$per_page,"page"=>$page));
+		$this->parse_response();
+		$result = $this->parsed_response['rsp']['groups'];
+		if (!empty($result['group']['nsid'])) {
+			$tmp = $result['group'];
+			unset($result['group']);
+			$result['group'][] = $tmp;
+		}
+		return $result;
+	}
+    
+    /* Groups Pools Methods */
     function groups_pools_add ($photo_id, $group_id) 
     {
         /* http://www.flickr.com/services/api/flickr.groups.pools.add.html */
@@ -733,20 +759,6 @@ class phpFlickr {
         $this->parse_response();
         return true;
     }
-    
-	function groups_search ($text, $per_page=NULL, $page=NULL)
-	{
-		/* http://www.flickr.com/services/api/flickr.groups.search.html */
-		$this->request("flickr.groups.search", array("text"=>$text,"per_page"=>$per_page,"page"=>$page));
-		$this->parse_response();
-		$result = $this->parsed_response['rsp']['groups'];
-		if (!empty($result['group']['nsid'])) {
-			$tmp = $result['group'];
-			unset($result['group']);
-			$result['group'][] = $tmp;
-		}
-		return $result;
-	}
     
     /* Interestingness methods */
 	function interestingness_getList($date = NULL, $extras = NULL, $per_page = NULL, $page = NULL) 
@@ -823,7 +835,7 @@ class phpFlickr {
         return $result;
     }
     
-    function people_getUploadStatus($user_id) 
+    function people_getUploadStatus() 
     {
         /* http://www.flickr.com/services/api/flickr.people.getUploadStatus.html */
         /* Requires Authentication */
@@ -1017,6 +1029,23 @@ class phpFlickr {
             $extras = implode(",", $extras); 
         }
         $this->request("flickr.photos.getUntagged", array("min_upload_date"=>$min_upload_date, "max_upload_date"=>$max_upload_date, "min_taken_date"=>$min_taken_date, "max_taken_date"=>$max_taken_date, "extras"=>$extras, "per_page"=>$per_page, "page"=>$page));
+        $this->parse_response();
+        $result = $this->parsed_response['rsp']['photos'];
+        if (!empty($result['photo']['id'])) {
+            $tmp = $result['photo'];
+            unset($result['photo']);
+            $result['photo'][] = $tmp;
+        }
+        return $result;
+    }
+    
+    function photos_recentlyUpdated($min_date = NULL, $extras = NULL, $per_page = NULL, $page = NULL) 
+    {
+        /* http://www.flickr.com/services/api/flickr.photos.getUntagged.html */
+        if (is_array($extras)) { 
+            $extras = implode(",", $extras); 
+        }
+        $this->request("flickr.photos.getUntagged", array("min_date"=>$min_date, "extras"=>$extras, "per_page"=>$per_page, "page"=>$page));
         $this->parse_response();
         $result = $this->parsed_response['rsp']['photos'];
         if (!empty($result['photo']['id'])) {
