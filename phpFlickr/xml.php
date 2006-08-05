@@ -89,11 +89,13 @@ class xml  {
    var $childTagsDirectlyUnderParent = false;
    
    var $caseInsensitive = false;
+   
+   var $useSAXYParser = false;
 
-   //var $_replace = array('°','&',"\n","", "Â","£");
-   //var $_replaceWith = array('{deg}', '{amp}', '{lf}','{ESC}', "&#194;","{GBP}");
-   var $_replace = array();
-   var $_replaceWith = array();
+   var $_replace = array('°','&',"\n","", "Â","£");
+   var $_replaceWith = array('{deg}', '{amp}', '{lf}','{ESC}', "&#194;","{GBP}");
+   //var $_replace = array();
+   //var $_replaceWith = array();
 
    function xml($caseInsensitive = false, $attributesDirectlyUnderParent = false, $childTagsDirectlyUnderParent = false)
    {
@@ -101,34 +103,41 @@ class xml  {
      $this->attributesDirectlyUnderParent = $attributesDirectlyUnderParent;
      $this->childTagsDirectlyUnderParent = $childTagsDirectlyUnderParent;
    }
+    
+    function useSAXY($useIt = true) {
+        $this->useSAXYParser = $useIt;
+    }
    
-   function parse($xml)
-   {
-    /* This is the original code that uses PHP's crappy XML functions.
-       $this->_parser = xml_parser_create();
-       
-       $this->input = $xml;
-       $xml = str_replace($this->_replace, $this->_replaceWith, $xml);
-       $xml = str_replace(">{lf}", ">\n", $xml);
-       
-       unset($this->_struct, $this->_index, $this->parsed);
-       xml_set_object($this->_parser, $this);
-       xml_parser_set_option($this->_parser, XML_OPTION_CASE_FOLDING, $this->caseInsensitive);
-       xml_parser_set_option($this->_parser, XML_OPTION_SKIP_WHITE, 1);
-       
-       xml_parse_into_struct($this->_parser, $xml, $this->_struct, $this->_index);
-      //*/
-
-       //* This is the replacement code that uses the SAXY Parser class I defined above.
-       $this->_parser = new SAXY_Custom;
-       $this->_struct = $this->_parser->parse($xml);
-       //*/
-
-       $this->parsed = $this->_postProcess($this->_struct);
-       $this->parsed = array($this->parsed['_name']=>$this->parsed);
-       
-       return $this->parsed;
-   }
+    function parse($xml)
+    {
+    // This is the original code that uses PHP's crappy XML functions.
+        if ($this->useSAXY) {
+            $this->_parser = new SAXY_Custom;
+            $this->_struct = $this->_parser->parse($xml);
+        } else {
+            $this->_parser = xml_parser_create();
+           
+            $this->input = $xml;
+            $xml = str_replace($this->_replace, $this->_replaceWith, $xml);
+            $xml = str_replace(">{lf}", ">\n", $xml);
+            
+            unset($this->_struct, $this->_index, $this->parsed);
+            xml_set_object($this->_parser, $this);
+            xml_parser_set_option($this->_parser, XML_OPTION_CASE_FOLDING, $this->caseInsensitive);
+            xml_parser_set_option($this->_parser, XML_OPTION_SKIP_WHITE, 1);
+            
+            xml_parse_into_struct($this->_parser, $xml, $this->_struct, $this->_index);
+        }
+        //*/
+        
+        //* This is the replacement code that uses the SAXY Parser class I defined above.
+        //*/
+        
+        $this->parsed = $this->_postProcess($this->_struct);
+        $this->parsed = array($this->parsed['_name']=>$this->parsed);
+        
+        return $this->parsed;
+    }
    
    /* You'll note that I used php's array pointer functions in the _postProcess function.
     In fact it looks like I made a foreach overly complicated in the 'open' case of the 
@@ -142,7 +151,7 @@ class xml  {
 
     if (isset($item['attributes']) && count($item['attributes'])>0) {
         foreach ($item['attributes'] as $key => $data) {
-            if (!is_null($data)) {
+            if (!is_null($data) && !$this->useSAXYParser) {
                 $item['attributes'][$key] = str_replace($this->_replaceWith, $this->_replace, $item['attributes'][$key]);
             }
         }
@@ -151,7 +160,7 @@ class xml  {
         $ret = array_merge($ret, $item['attributes']);
     }
 
-    if (isset($item['value']) && $item['value'] != null)
+    if (isset($item['value']) && $item['value'] != null && !$this->useSAXYParser)
       $item['value'] = str_replace($this->_replaceWith, $this->_replace, $item['value']);
     
     switch ($item['type']) {
