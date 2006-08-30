@@ -5,6 +5,22 @@ phpFlickr - Changelog
 Version 1.6
 -----------
 
+2006-08-29 Dan Coulter  <dancoulter@users.sourceforge.net>
+    * phpFlickr.php: Implemented the new comment and geocoding
+        API methods.
+
+2006-08-04 Dan Coulter  <dancoulter@users.sourceforge.net>
+    * phpFlickr.php: added support for new API methods. Also,
+        added useSAXY method to switch to the SAXY parser.
+    * xml.php: Changed parser so that it uses PHP's XML functions
+        by default, but you can choose to use SAXY if you may run
+        into unusual characters.  Using SAXY requires alot more
+        memory for your scripts.
+    
+
+Version 1.6-beta
+----------------
+
 2006-06-19 Dan Coulter  <dancoulter@users.sourceforge.net>
     * xml.php: Replaced PHP's XML functions with the SAXY_Parser
         class to remove the problems with unusual characters that
