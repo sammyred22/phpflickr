@@ -1039,13 +1039,55 @@ class phpFlickr {
         return $result;
     }
     
+    function photos_getWithGeoData($args = NULL) {
+        /* See the documentation included with the photos_search() function.
+         * I'm using the same style of arguments for this function. The only
+         * difference here is that this doesn't require any arguments. The
+         * flickr.photos.search method requires at least one search parameter.
+         */
+        /* http://www.flickr.com/services/api/flickr.photos.getWithGeoData.html */
+        if (is_null($args)) {
+            $args = array();
+        }
+        $this->request("flickr.photos.getWithGeoData", $args);
+        $this->parse_response();
+        $result = $this->parsed_response['rsp']['photos'];
+        if (!empty($result['photo']['id'])) {
+            $tmp = $result['photo'];
+            unset($result['photo']);
+            $result['photo'][] = $tmp;
+        }
+        return $result;
+    }
+    
+    function photos_getWithoutGeoData($args = NULL) {
+        /* See the documentation included with the photos_search() function.
+         * I'm using the same style of arguments for this function. The only
+         * difference here is that this doesn't require any arguments. The
+         * flickr.photos.search method requires at least one search parameter.
+         */
+        /* http://www.flickr.com/services/api/flickr.photos.getWithoutGeoData.html */
+        if (is_null($args)) {
+            $args = array();
+        }
+        $this->request("flickr.photos.getWithoutGeoData", $args);
+        $this->parse_response();
+        $result = $this->parsed_response['rsp']['photos'];
+        if (!empty($result['photo']['id'])) {
+            $tmp = $result['photo'];
+            unset($result['photo']);
+            $result['photo'][] = $tmp;
+        }
+        return $result;
+    }
+    
     function photos_recentlyUpdated($min_date = NULL, $extras = NULL, $per_page = NULL, $page = NULL) 
     {
         /* http://www.flickr.com/services/api/flickr.photos.getUntagged.html */
         if (is_array($extras)) { 
             $extras = implode(",", $extras); 
         }
-        $this->request("flickr.photos.getUntagged", array("min_date"=>$min_date, "extras"=>$extras, "per_page"=>$per_page, "page"=>$page));
+        $this->request("flickr.photos.recentlyUpdated", array("min_date"=>$min_date, "extras"=>$extras, "per_page"=>$per_page, "page"=>$page));
         $this->parse_response();
         $result = $this->parsed_response['rsp']['photos'];
         if (!empty($result['photo']['id'])) {
@@ -1122,6 +1164,27 @@ class phpFlickr {
     }
     
     /* Photos - Comments Methods */
+    function photos_comments_addComment($photo_id, $comment_text) {
+        /* http://www.flickr.com/services/api/flickr.photos.comments.addComment.html */
+        $this->request("flickr.photos.comments.addComment", array("photo_id" => $photo_id, "comment_text"=>$comment_text), TRUE);
+        $this->parse_response();
+        return $this->parsed_response['rsp']['comment']['id'];
+    }
+    
+    function photos_comments_deleteComment($comment_id) {
+        /* http://www.flickr.com/services/api/flickr.photos.comments.deleteComment.html */
+        $this->request("flickr.photos.comments.deleteComment", array("comment_id" => $comment_id), TRUE);
+        $this->parse_response();
+        return true;
+    }
+    
+    function photos_comments_editComment($comment_id, $comment_text) {
+        /* http://www.flickr.com/services/api/flickr.photos.comments.editComment.html */
+        $this->request("flickr.photos.comments.editComment", array("comment_id" => $comment_id, "comment_text"=>$comment_text), TRUE);
+        $this->parse_response();
+        return true;
+    }
+    
     function photos_comments_getList($photo_id) 
     {
         /* http://www.flickr.com/services/api/flickr.photos.comments.getList.html */
@@ -1136,6 +1199,47 @@ class phpFlickr {
         return $result['comment'];
     }
 
+    /* Photos - Geo Methods */
+    function photos_geo_getLocation($photo_id)
+    {
+        /* http://www.flickr.com/services/api/flickr.photos.geo.getLocation.html */
+        $this->request("flickr.photos.geo.getLocation", array("photo_id"=>$photo_id));
+        $this->parse_response();
+        return $this->parsed_response['rsp']['photo'];
+    }    
+    
+    function photos_geo_getPerms($photo_id)
+    {
+        /* http://www.flickr.com/services/api/flickr.photos.geo.getPerms.html */
+        $this->request("flickr.photos.geo.getPerms", array("photo_id"=>$photo_id));
+        $this->parse_response();
+        return $this->parsed_response['rsp']['perms'];
+    }    
+    
+    function photos_geo_removeLocation($photo_id)
+    {
+        /* http://www.flickr.com/services/api/flickr.photos.geo.removeLocation.html */
+        $this->request("flickr.photos.geo.removeLocation", array("photo_id"=>$photo_id), TRUE);
+        $this->parse_response();
+        return true;
+    }    
+    
+    function photos_geo_setLocation($photo_id, $lat, $lon, $accuracy = NULL)
+    {
+        /* http://www.flickr.com/services/api/flickr.photos.geo.setLocation.html */
+        $this->request("flickr.photos.geo.setLocation", array("photo_id"=>$photo_id, "lat"=>$lat, "lon"=>$lon, "accuracy"=>$accuracy), TRUE);
+        $this->parse_response();
+        return true;
+    }    
+    
+    function photos_geo_setPerms($photo_id, $is_public, $is_contact, $is_friend, $is_family)
+    {
+        /* http://www.flickr.com/services/api/flickr.photos.geo.setPerms.html */
+        $this->request("flickr.photos.geo.setPerms", array("photo_id"=>$photo_id, "is_public"=>$is_public, "is_contact"=>$is_contact, "is_friend"=>$is_friend, "is_family"=>$is_family), TRUE);
+        $this->parse_response();
+        return true;
+    }
+    
     /* Photos - Notes Methods */
     function photos_licenses_getInfo() 
     {
@@ -1309,6 +1413,42 @@ class phpFlickr {
         return true;
     }
     
+    /* Photosets Comments Methods */
+    function photosets_comments_addComment($photoset_id, $comment_text) {
+        /* http://www.flickr.com/services/api/flickr.photosets.comments.addComment.html */
+        $this->request("flickr.photosets.comments.addComment", array("photoset_id" => $photoset_id, "comment_text"=>$comment_text), TRUE);
+        $this->parse_response();
+        return $this->parsed_response['rsp']['comment']['id'];
+    }
+    
+    function photosets_comments_deleteComment($comment_id) {
+        /* http://www.flickr.com/services/api/flickr.photosets.comments.deleteComment.html */
+        $this->request("flickr.photosets.comments.deleteComment", array("comment_id" => $comment_id), TRUE);
+        $this->parse_response();
+        return true;
+    }
+    
+    function photosets_comments_editComment($comment_id, $comment_text) {
+        /* http://www.flickr.com/services/api/flickr.photosets.comments.editComment.html */
+        $this->request("flickr.photosets.comments.editComment", array("comment_id" => $comment_id, "comment_text"=>$comment_text), TRUE);
+        $this->parse_response();
+        return true;
+    }
+    
+    function photosets_comments_getList($photoset_id) 
+    {
+        /* http://www.flickr.com/services/api/flickr.photosets.comments.getList.html */
+        $this->request("flickr.photosets.comments.getList", array("photoset_id"=>$photoset_id));
+        $this->parse_response();
+        $result = $this->parsed_response['rsp']['comments'];
+        if (!empty($result['comment']['id'])) {
+            $tmp = $result['comment'];
+            unset($result['comment']);
+            $result['comment'][] = $tmp;
+        }
+        return $result['comment'];
+    }
+
     /* Reflection Methods */
     function reflection_getMethodInfo($method_name) 
     {
