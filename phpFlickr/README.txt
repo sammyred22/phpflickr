@@ -1,4 +1,4 @@
-phpFlickr Class 1.6-beta
+phpFlickr Class 1.6
 Written by Dan Coulter (dancoulter@users.sourceforge.net)
 Project Homepage: http://www.phpflickr.com/
 Sourceforge Project Page: http://www.sourceforge.net/projects/phpflickr/
@@ -195,7 +195,12 @@ Other Notes:
             $f = new phpFlickr("[api key]");
             $f->setProxy("localhost", "8181");
         After that, all of your calls will be automatically made through your proxy server.
-    3.  As of phpFlickr version 1.5, I've decided to add support for 23's API. The
+    3.  As of version 1.6, you can use a new XML parser.  By default, phpFlickr still uses
+        PHP's XML parser, but you can use the SAXY parser, if you like.  This parser handles
+        odd characters much better than PHP's XML parser, but takes a lot more RAM.  To use it:
+            $f = new phpFlickr("[api key]");
+            $f->useSAXY(true);
+    4.  As of phpFlickr version 1.5, I've decided to add support for 23's API. The
         reasoning behind this is that 23 (a European-based photo sharing community)
         has released an API based on Flickr's.  Their main reason for doing so seems
         to be compatibility for developers.  This means that your app may instantly
