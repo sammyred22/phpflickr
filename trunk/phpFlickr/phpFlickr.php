@@ -1,8 +1,8 @@
 <?php
-/* phpFlickr Class 1.6
+/* phpFlickr Class 1.6.1
  * Written by Dan Coulter (dan@dancoulter.com)
  * Sourceforge Project Page: http://www.sourceforge.net/projects/phpflickr/
- * Released under GNU General Public License (http://www.gnu.org/copyleft/gpl.html)
+ * Released under GNU Lesser General Public License (http://www.gnu.org/copyleft/lgpl.html)
  * For more information about the class and upcoming tools and toys using it,
  * visit http://www.phpflickr.com/ or http://phpflickr.sourceforge.net
  *
@@ -45,9 +45,9 @@ ini_set('include_path', ini_get('include_path') . $path_delimiter . dirname(__FI
 class phpFlickr {
     var $api_key;
     var $secret;
-    var $REST = 'http://www.flickr.com/services/rest/';
-    var $Upload = 'http://www.flickr.com/services/upload/';
-    var $Replace = 'http://www.flickr.com/services/replace/';
+    var $REST = 'http://api.flickr.com/services/rest/';
+    var $Upload = 'http://api.flickr.com/services/upload/';
+    var $Replace = 'http://api.flickr.com/services/replace/';
     var $xml_parser;
     var $req;
     var $response;
@@ -105,7 +105,7 @@ class phpFlickr {
             $db->query("
                 CREATE TABLE IF NOT EXISTS `$table` (
                     `request` CHAR( 35 ) NOT NULL ,
-                    `response` TEXT NOT NULL ,
+                    `response` MEDIUMTEXT NOT NULL ,
                     `expiration` DATETIME NOT NULL ,
                     INDEX ( `request` )
                 ) TYPE = MYISAM");
@@ -246,9 +246,9 @@ class phpFlickr {
 			$this->Replace = 'http://www.23hq.com/services/replace/';
 		} elseif (strtolower($service) == "flickr") {
 			$this->service = "flickr";
-			$this->REST = 'http://www.flickr.com/services/rest/';
-			$this->Upload = 'http://www.flickr.com/services/upload/';
-			$this->Replace = 'http://www.flickr.com/services/replace/';
+			$this->REST = 'http://api.flickr.com/services/rest/';
+			$this->Upload = 'http://api.flickr.com/services/upload/';
+			$this->Replace = 'http://api.flickr.com/services/replace/';
 		} else {
 			die ("You have entered a service that does not exist or is not supported at this time.");
 		}
@@ -319,6 +319,14 @@ class phpFlickr {
         }
         $url .= ".jpg";
         return $url;
+    }
+    
+    function getFriendlyGeodata($lat, $lon) {
+        /* I've added this method to get the friendly geodata (i.e. 'in New York, NY') that the
+         * website provides, but isn't available in the API. I'm providing this service as long
+         * as it doesn't flood my server with requests and crash it all the time.
+         */
+        return unserialize(file_get_contents('http://phpflickr.com/geodata/?format=php&lat=' . $lat . '&lon=' . $lon));
     }
     
     function sync_upload ($photo, $title = null, $description = null, $tags = null, $is_public = null, $is_friend = null, $is_family = null) {

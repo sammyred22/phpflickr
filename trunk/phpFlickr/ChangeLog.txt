@@ -2,6 +2,13 @@
 phpFlickr - Changelog
 ---------------------
 
+Version 1.6.1
+-------------
+
+2006-09-01 Dan Coulter  <dancoulter@users.sourceforge.net>
+    * phpFlickr.php: Changed the license to the LGPL and
+        implemented my friendly geodata service.
+
 Version 1.6
 -----------
 
