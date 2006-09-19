@@ -110,13 +110,11 @@ class phpFlickr {
                     INDEX ( `request` )
                 ) TYPE = MYISAM");
             $db->query("DELETE FROM $table WHERE expiration < DATE_SUB(NOW(), INTERVAL $cache_expire second)");
-            if (strpos($connection, 'mysql') !== false) {
-                $db->query('OPTIMIZE TABLE ' . $table);
-            }
+
             $this->cache = 'db';
             $this->cache_db = $db;
             $this->cache_table = $table;
-        } elseif ($type = 'fs') {
+        } elseif ($type == 'fs') {
             $this->cache = 'fs';
             $connection = realpath($connection);
             $this->cache_dir = $connection;
@@ -129,6 +127,18 @@ class phpFlickr {
             }
         }
         $this->cache_expire = $cache_expire;
+    }
+    
+    /*
+     * When using MySQL, the database can start to drag after a lot of
+     * deletions have been made to a table.  You may need to schedule
+     * a time to run an optimization of your cache.  Use the function
+     * below to do just that.  If you run this too often, it can start
+     * to affect performance if you get a lot of traffic.
+     */
+    function optimizeCache ()
+    {
+        $this->cache_db->query('OPTIMIZE TABLE ' . $this->cache_table);
     }
     
     function getCached ($request) 
