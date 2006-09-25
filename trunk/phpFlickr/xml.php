@@ -111,7 +111,7 @@ class xml  {
     function parse($xml)
     {
     // This is the original code that uses PHP's crappy XML functions.
-        if ($this->useSAXY) {
+        if ($this->useSAXYParser) {
             $this->_parser = new SAXY_Custom;
             $this->_struct = $this->_parser->parse($xml);
         } else {
