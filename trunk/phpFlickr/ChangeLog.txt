@@ -2,12 +2,28 @@
 phpFlickr - Changelog
 ---------------------
 
+Version 2.0.0
+-------------
+
+2006-09-29 Dan Coulter  <dancoulter@users.sourceforge.net>
+    IMPORTANT: This version will not be 100% backwards compatible.
+        It may very well break older apps if you try to copy it over
+        an older version of phpFlickr.  Be sure you test thoroughly.
+
+    * phpFlickr.php: Updated class to use Flickr's Serialized PHP 
+        format.  Also, I revamped the error handling and caching.
+        Fixed a bug in file uploading.
+    * xml.php: Deleted.
+    * xml_SAXY_parser.php: Deleted.
+
+
 Version 1.6.1
 -------------
 
 2006-09-01 Dan Coulter  <dancoulter@users.sourceforge.net>
     * phpFlickr.php: Changed the license to the LGPL and
         implemented my friendly geodata service.
+
 
 Version 1.6
 -----------
