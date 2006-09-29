@@ -1,4 +1,4 @@
-phpFlickr Class 1.6.1
+phpFlickr Class 2.0.0
 Written by Dan Coulter (dancoulter@users.sourceforge.net)
 Project Homepage: http://www.phpflickr.com/
 Sourceforge Project Page: http://www.sourceforge.net/projects/phpflickr/
@@ -7,52 +7,51 @@ For more information about the class and upcoming tools and applications using i
 visit http://www.phpflickr.com/ or http://www.sourceforge.net/projects/phpflickr/
 
 Installation instructions:
-1.  You have to be sure that you have the php PEAR prereq packages installed. The 
-    only one you absolutely need is HTTP_Request. If you want to do any caching, 
-    you'll also need to install the DB package.
-
-    NOTE: If you have installed version 1.3.1 of phpFlickr or later with the prereqs 
-    included, you can skip this step.
+1.  Copy the files from the installation package into a folder on your
+    server.  They need to be readible by your web server.  You can put 
+    them into an include folder defined in your php.ini file, if you 
+    like, though it's not required. 
     
-    If you have PEAR installed on your *nix server, you can run "pear install [package]" 
-    from the command line. You can find much more information and documentation at 
-    http://pear.php.net/. You can get detailed installation instructions there.
-    
-2.  Copy xml.php and phpFlickr.php into the same folder on your server.  They need to
-    be readible by your web server.  You can put them into an include folder defined
-    in your php.ini file, if you like, though it's not required.  
-    
-3.  All you have to do now is include the file in your PHP scripts and create an     
-    instance.  For example:
+2.  All you have to do now is include the file in your PHP scripts and 
+    create an instance.  For example:
     $f = new phpFlickr();
 
     The constructor has three arguments:
-    A.  $api_key - This is the API key given to you by flickr.com. This argument is
-        required and you can get an API Key at:
+    A.  $api_key - This is the API key given to you by flickr.com. This 
+        argument is required and you can get an API Key at:
         http://www.flickr.com/services/api/key.gne
         
-    B.  $secret - The "secret" is optional because is not required to make 
-        unauthenticated calls, but is absolutely required for the new authentication 
-        API (see Authentication section below).  You will get one assigned alongside 
-        your api key.
+    B.  $secret - The "secret" is optional because is not required to 
+        make unauthenticated calls, but is absolutely required for the 
+        new authentication API (see Authentication section below).  You 
+        will get one assigned alongside your api key.
     
-    C.  $die_on_error - This takes a boolean value and determines whether the class
-        will die (aka cease operation) if the API returns an error statement.  It
-        defaults to true.  If you set it to false, you can still see error messages
-        with the getErrorCode() and getErrorMsg() functions.
+    C.  $die_on_error - This takes a boolean value and determines 
+        whether the class will die (aka cease operation) if the API 
+        returns an error statement.  It defaults to false.  Every method 
+        will return false if the API returns an error.  You can access 
+        error messages using the getErrorCode() and getErrorMsg() 
+        methods.
         
-4.  All of the API methods have been implemented in my class.  You can see a full list
-    and documentation here: http://www.flickr.com/services/api/.  To call a method,
-    remove the "flickr." part of the name and replace any periods with underscores.
-    For example, instead of flickr.photos.search, you would call $f->photos_search()
-    or instead of flickr.photos.licenses.getInfo, you would call
+3.  All of the API methods have been implemented in my class.  You can 
+    see a full list and documentation here: 
+        http://www.flickr.com/services/api/
+    To call a method, remove the "flickr." part of the name and replace 
+    any periods with underscores. For example, instead of 
+    flickr.photos.search, you would call $f->photos_search() or instead 
+    of flickr.photos.licenses.getInfo, you would call 
     $f->photos_licenses_getInfo() (yes, it is case sensitive).
-    All functions have their arguments implemented in the list order on their
-    documentation page (a link to which is included with each function in the clasS).
-    The only exception to this is photos_search() which has so many optional arguments
-    that it's easier for everyone around if you just have to pass an associative array
-    of arguments.  See the comment in the photos_search() definition in phpFlickr.php 
-    for more information.
+    
+    All functions have their arguments implemented in the list order on 
+    their documentation page (a link to which is included with each 
+    method in the phpFlickr clasS). The only exceptions to this are 
+    photos_search(), photos_getWithoutGeodata() and 
+    photos_getWithoutGeodata() which have so many optional arguments
+    that it's easier for everyone if you just have to pass an 
+    associative array of arguments.  See the comment in the 
+    photos_search() definition in phpFlickr.php for more information.
+    
+
     
 Authentication:
     As of this release of the phpFlickr class there is only one authentication method
@@ -176,6 +175,8 @@ Replacing Photos
         Photo: The path of the file to upload.
         Photo ID: The numeric Flickr ID of the photo you want to replace.
         Async (optional): Set to 0 for a synchronous call, 1 for asynchronous.
+    If you use the asynchronous call, it will return a ticketid instead
+    of photoid.
 
 Other Notes:
     1.  Many of the methods have optional arguments.  For these, I have implemented 
@@ -195,12 +196,10 @@ Other Notes:
             $f = new phpFlickr("[api key]");
             $f->setProxy("localhost", "8181");
         After that, all of your calls will be automatically made through your proxy server.
-    3.  As of version 1.6, you can use a new XML parser.  By default, phpFlickr still uses
-        PHP's XML parser, but you can use the SAXY parser, if you like.  This parser handles
-        odd characters much better than PHP's XML parser, but takes a lot more RAM.  To use it:
-            $f = new phpFlickr("[api key]");
-            $f->useSAXY(true);
-    4.  As of phpFlickr version 1.5, I've decided to add support for 23's API. The
+    3.  NOTE: phpFlickr's support of 23's API is only supported in 1.x
+            versions of phpFlickr.  This will not work in 2.x until they
+            begin using serialized PHP.  Don't even try!
+        As of phpFlickr version 1.5, I've decided to add support for 23's API. The
         reasoning behind this is that 23 (a European-based photo sharing community)
         has released an API based on Flickr's.  Their main reason for doing so seems
         to be compatibility for developers.  This means that your app may instantly
