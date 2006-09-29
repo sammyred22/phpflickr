@@ -6,6 +6,9 @@ Released under GNU Lesser General Public License (http://www.gnu.org/copyleft/lg
 For more information about the class and upcoming tools and applications using it,
 visit http://www.phpflickr.com/ or http://www.sourceforge.net/projects/phpflickr/
 
+If you are interested in hiring me for a project (involving phpFlickr
+or not), feel free to email me.
+
 Installation instructions:
 1.  Copy the files from the installation package into a folder on your
     server.  They need to be readible by your web server.  You can put 
