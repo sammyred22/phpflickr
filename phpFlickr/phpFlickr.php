@@ -1283,6 +1283,13 @@ class phpFlickr {
     }
     
     /* Tags Methods */
+    function tags_getHotList($period = NULL, $count = NULL) 
+    {
+        /* http://www.flickr.com/services/api/flickr.tags.getHotList.html */
+        $this->request("flickr.tags.getHotList", array("period" => $period, "count" => $count));
+        return $this->parsed_response ? $this->parsed_response['hottags'] : false;
+    }
+
     function tags_getListPhoto($photo_id) 
     {
         /* http://www.flickr.com/services/api/flickr.tags.getListPhoto.html */
