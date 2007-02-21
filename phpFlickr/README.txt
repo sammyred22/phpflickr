@@ -1,4 +1,4 @@
-phpFlickr Class 2.0.0
+phpFlickr Class 2.1.0
 Written by Dan Coulter (dancoulter@users.sourceforge.net)
 Project Homepage: http://www.phpflickr.com/
 Sourceforge Project Page: http://www.sourceforge.net/projects/phpflickr/
@@ -96,6 +96,9 @@ Authentication:
             account, no matter who views your website.  This is useful to display
             private photos or photosets (among other things).
             
+            *Note*: The method below is a little hard to understand, so I've setup a tool
+            to help you through this: http://www.phpflickr.com/tools/auth/.
+                        
             First, you'll have to setup a callback script with Flickr.  Once you've
             done that, edit line 12 of the included getToken.php file to reflect 
             which permissions you'll need for the app.  Then browse to the page.
