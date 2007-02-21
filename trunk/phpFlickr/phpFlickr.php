@@ -263,36 +263,6 @@ class phpFlickr {
         }
     }
 
-    /*
-     * As of version 2.0.0, the 23 service will no longer work with phpFlickr.
-     * If you would like to use the 23 photo service, download version 1.6.1,
-     * but bear in mind that it is no loner supported.  If 23 releases a serialized
-     * php format, I'll switch this back on.
-     */
-	/*
-    function setService($service)
-    {
-
-		// Sets which service to connect to.  Currently supported services are
-		// "flickr" and "23"
-		if ($service == "23") {
-			$this->service = "23";
-			$this->REST = 'http://www.23hq.com/services/rest/';
-			$this->Upload = 'http://www.23hq.com/services/upload/';
-			$this->Replace = 'http://www.23hq.com/services/replace/';
-		} elseif (strtolower($service) == "flickr") {
-			$this->service = "flickr";
-			$this->REST = 'http://api.flickr.com/services/rest/';
-			$this->Upload = 'http://api.flickr.com/services/upload/';
-			$this->Replace = 'http://api.flickr.com/services/replace/';
-		} else {
-			die ("You have entered a service that does not exist or is not supported at this time.");
-		}
-
-		return false;
-    }
-    */
-
     function setToken($token)
     {
         // Sets an authentication token to use instead of the session variable
@@ -326,33 +296,25 @@ class phpFlickr {
         //receives an array (can use the individual photo data returned
         //from an API call) and returns a URL (doesn't mean that the
         //file size exists)
-		if ($this->service == "23") {
-			$url = "http://www.23hq.com/";
-		} else {
-			$url = "http://static.flickr.com/";
+        $sizes = array(
+            "square" => "_s",
+            "thumbnail" => "_t",
+            "small" => "_m",
+            "medium" => "",
+            "large" => "_b",
+            "original" => "_o"
+        );
+        
+        $size = strtolower($size);
+        if (!array_key_exists($size, $sizes)) {
+            $size = "medium";
         }
-        $url .= $photo['server'] . "/" . $photo['id'] . "_" . $photo['secret'];
-        switch (strtolower($size)) {
-            case "square":
-                $url .= "_s";
-                break;
-            case "thumbnail":
-                $url .= "_t";
-                break;
-            case "small":
-                $url .= "_m";
-                break;
-            case "medium":
-                $url .= "";
-                break;
-            case "large":
-                $url .= "_b";
-                break;
-            case "original":
-                $url .= "_o";
-                break;
+        
+        if ($size == "original") {
+            $url = "http://farm" . $photo['farm'] . ".static.flickr.com/" . $photo['server'] . "/" . $photo['id'] . "_" . $photo['originalsecret'] . "_o" . "." . $photo['originalformat'];
+        } else {
+            $url = "http://farm" . $photo['farm'] . ".static.flickr.com/" . $photo['server'] . "/" . $photo['id'] . "_" . $photo['secret'] . $sizes[$size] . ".jpg";
         }
-        $url .= ".jpg";
         return $url;
     }
 
@@ -912,6 +874,13 @@ class phpFlickr {
         $this->request("flickr.photos.getExif", array("photo_id"=>$photo_id, "secret"=>$secret));
         return $this->parsed_response ? $this->parsed_response['photo'] : false;
     }
+    
+    function photos_getFavorites($photo_id, $page = NULL, $per_page = NULL)
+    {
+        /* http://www.flickr.com/services/api/flickr.photos.getFavorites.html */
+        $this->request("flickr.photos.getFavorites", array("photo_id"=>$photo_id, "page"=>$page, "per_page"=>$per_page));
+        return $this->parsed_response ? $this->parsed_response['photo'] : false;
+    }
 
     function photos_getInfo($photo_id, $secret = NULL)
     {
@@ -1232,10 +1201,10 @@ class phpFlickr {
         return $this->parsed_response ? $this->parsed_response['photosets'] : false;
     }
 
-    function photosets_getPhotos($photoset_id, $extras = NULL, $privacy_filter = NULL)
+    function photosets_getPhotos($photoset_id, $extras = NULL, $privacy_filter = NULL, $per_page = NULL, $page = NULL)
     {
         /* http://www.flickr.com/services/api/flickr.photosets.getPhotos.html */
-        $this->request("flickr.photosets.getPhotos", array("photoset_id" => $photoset_id, "extras" => $extras, "privacy_filter" => $privacy_filter));
+        $this->request("flickr.photosets.getPhotos", array("photoset_id" => $photoset_id, "extras" => $extras, "privacy_filter" => $privacy_filter, "per_page" => $per_page, "page" => $page));
         return $this->parsed_response ? $this->parsed_response['photoset'] : false;
     }
 
