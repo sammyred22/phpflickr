@@ -2,6 +2,22 @@
 phpFlickr - Changelog
 ---------------------
 
+Version 2.1.0
+-------------
+
+2006-11-21 Dan Coulter  <dancoulter@users.sourceforge.net>
+    * phpFlickr.php: Updated the buildPhotoURL method to 
+      reflect recent changes in the Flickr API.  Also added the 
+      photos_getFavorites method and added pagination arguments 
+      to photosets_getPhotos..
+    
+2006-11-21 Dan Coulter  <dancoulter@users.sourceforge.net>
+    * phpFlickr.php: Added the activity methods.
+        
+2006-10-18 Dan Coulter  <dancoulter@users.sourceforge.net>
+    * phpFlickr.php: Added the tags_getHotList method.
+        
+        
 Version 2.0.0
 -------------
 
