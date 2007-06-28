@@ -593,14 +593,14 @@ class phpFlickr {
     {
         /* http://www.flickr.com/services/api/flickr.activity.userComments.html */
         $this->request('flickr.activity.userComments', array("per_page" => $per_page, "page" => $page));
-        return $this->parsed_response ? $this->parsed_response['items']['item'] : false;
+        return $this->parsed_response ? $this->parsed_response['items'] : false;
     }
 
     function activity_userPhotos ($timeframe = NULL, $per_page = NULL, $page = NULL)
     {
         /* http://www.flickr.com/services/api/flickr.activity.userPhotos.html */
         $this->request('flickr.activity.userPhotos', array("timeframe" => $timeframe, "per_page" => $per_page, "page" => $page));
-        return $this->parsed_response ? $this->parsed_response['items']['item'] : false;
+        return $this->parsed_response ? $this->parsed_response['items'] : false;
     }
 
     /* Authentication methods */
