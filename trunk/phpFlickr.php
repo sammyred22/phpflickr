@@ -219,6 +219,8 @@ class phpFlickr {
                 $this->req->addPostData("api_sig", $api_sig);
             }
 
+            $this->req->addHeader("Connection", "Keep-Alive");
+            
             //Send Requests
             if ($this->req->sendRequest()) {
                 $this->response = $this->req->getResponseBody();
