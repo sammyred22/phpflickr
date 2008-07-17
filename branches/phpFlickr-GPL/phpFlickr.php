@@ -1,8 +1,8 @@
 <?php
-/* phpFlickr Class 2.2.0
+/* phpFlickr Class 2.2.0-GPL
  * Written by Dan Coulter (dan@dancoulter.com)
  * Sourceforge Project Page: http://www.sourceforge.net/projects/phpflickr/
- * Released under GNU Lesser General Public License (http://www.gnu.org/copyleft/lgpl.html)
+ * Released under GNU General Public License (http://www.gnu.org/copyleft/gpl.html)
  * For more information about the class and upcoming tools and toys using it,
  * visit http://www.phpflickr.com/ or http://phpflickr.sourceforge.net
  *
@@ -10,43 +10,20 @@
  *	 class. If you don't have a copy, you can see it at:
  *	 http://www.phpflickr.com/README.txt
  *
- *	 Please submit all problems or questions to the Help Forum on my project page:
- *		 http://sourceforge.net/forum/forum.php?forum_id=469652
+ *	 Please submit all problems or questions me via email (listed above)
  *
  */
 if (session_id() == "") {
 	@session_start();
 }
 
-// Decides which include path delimiter to use.  Windows should be using a semi-colon
-// and everything else should be using a colon.  If this isn't working on your system,
-// comment out this if statement and manually set the correct value into $path_delimiter.
-if (strpos(__FILE__, ':') !== false) {
-	$path_delimiter = ';';
-} else {
-	$path_delimiter = ':';
-}
-
-// This will add the packaged PEAR files into the include path for PHP, allowing you
-// to use them transparently.  This will prefer officially installed PEAR files if you
-// have them.  If you want to prefer the packaged files (there shouldn't be any reason
-// to), swap the two elements around the $path_delimiter variable.  If you don't have
-// the PEAR packages installed, you can leave this like it is and move on.
-
-ini_set('include_path', ini_get('include_path') . $path_delimiter . dirname(__FILE__) . '/PEAR');
-
-// If you have problems including the default PEAR install (like if your open_basedir
-// setting doesn't allow you to include files outside of your web root), comment out
-// the line above and uncomment the next line:
-
-// ini_set('include_path', dirname(__FILE__) . '/PEAR' . $path_delimiter . ini_get('include_path'));
-
 class phpFlickr {
 	var $api_key;
 	var $secret;
-	var $REST = 'http://api.flickr.com/services/rest/';
-	var $Upload = 'http://api.flickr.com/services/upload/';
-	var $Replace = 'http://api.flickr.com/services/replace/';
+	
+	var $rest_endpoint = 'http://api.flickr.com/services/rest/';
+	var $upload_endpoint = 'http://api.flickr.com/services/upload/';
+	var $replace_endpoint = 'http://api.flickr.com/services/replace/';
 	var $req;
 	var $response;
 	var $parsed_response;
@@ -60,6 +37,7 @@ class phpFlickr {
 	Var $error_msg;
 	var $token;
 	var $php_version;
+	var $custom_post = null;
 
 	/*
 	 * When your database cache table hits this many rows, a cleanup
@@ -87,9 +65,9 @@ class phpFlickr {
 		$this->php_version = explode(".", $this->php_version[0]);
 
 		//All calls to the API are done via the POST method using the PEAR::HTTP_Request package.
-		require_once 'HTTP/Request.php';
-		$this->req =& new HTTP_Request();
-		$this->req->setMethod(HTTP_REQUEST_METHOD_POST);
+		//require_once 'HTTP/Request.php';
+		//$this->req =& new HTTP_Request();
+		//$this->req->setMethod(HTTP_REQUEST_METHOD_POST);
 	}
 
 	function enableCache($type, $connection, $cache_expire = 600, $table = 'flickr_cache')
@@ -102,6 +80,8 @@ class phpFlickr {
 		// access to. Use absolute paths for best results.  Relative paths may have unexpected behavior
 		// when you include this.  They'll usually work, you'll just want to test them.
 		if ($type == 'db') {
+			die("no database caching for now!");
+		/*
 			require_once 'DB.php';
 			$db =& DB::connect($connection);
 			if (PEAR::isError($db)) {
@@ -112,7 +92,7 @@ class phpFlickr {
 			 * If high performance is crucial, you can easily comment
 			 * out this query once you've created your database table.
 			 */
-
+/*
 			$db->query("
 				CREATE TABLE IF NOT EXISTS `$table` (
 					`request` CHAR( 35 ) NOT NULL ,
@@ -129,6 +109,7 @@ class phpFlickr {
 			$this->cache = 'db';
 			$this->cache_db = $db;
 			$this->cache_table = $table;
+			*/
 		} elseif ($type == 'fs') {
 			$this->cache = 'fs';
 			$connection = realpath($connection);
@@ -190,12 +171,61 @@ class phpFlickr {
 		}
 		return false;
 	}
-
+	
+	function setCustomPost ( $function ) {
+		$this->custom_post = $function;
+	}
+	
+	function post ($data, $type = null) {
+		if ( is_null($type) ) {
+			$url = $this->rest_endpoint;
+		}
+		
+		if ( !is_null($this->custom_post) ) {
+			
+		}
+		
+		if ( !preg_match("|http://(.*?)(/.*)|", $url, $matches) ) {
+			die('There was some problem figuring out your endpoint');
+		}
+		
+		foreach ( $data as $key => $value ) {
+			$data[$key] = $key . '=' . urlencode($value);
+		}
+		$data = implode('&', $data);
+		
+		
+		$fp = pfsockopen($matches[1], 80);
+		if(!$fp) return null;
+		fputs ($fp,'POST ' . $matches[2] . " HTTP/1.1\n");
+		fputs ($fp,'Host: ' . $matches[1] . "\n");
+		fputs ($fp,"Content-type: application/x-www-form-urlencoded\n");
+		fputs ($fp,"Content-length: ".strlen($data)."\n");
+		fputs ($fp,"Connection: close\r\n\r\n");
+		fputs ($fp,$data . "\n\n");
+		$response = "";
+		while(!feof($fp)) {
+			$response .= fgets($fp, 1024);
+		}
+		fclose ($fp);
+		$chunked = false;
+		if ( strpos($response, 'Transfer-Encoding: chunked') !== false ) {
+			$temp = trim(strstr($response, "\r\n\r\n"));
+			$response = '';
+			$length = trim(substr($temp, 0, strpos($temp, "\r")));
+			while ( trim($temp) != "0" && ($length = trim(substr($temp, 0, strpos($temp, "\r")))) != "0" ) {
+				$response .= trim(substr($temp, strlen($length)+2, hexdec($length)));
+				$temp = trim(substr($temp, strlen($length) + 2 + hexdec($length)));
+			}
+		} elseif ( strpos($response, 'HTTP/1.1 200 OK') !== false ) {
+			$response = trim(strstr($response, "\r\n\r\n"));
+		}
+		return $response;
+	}
+	
 	function request ($command, $args = array(), $nocache = false)
 	{
 		//Sends a request to Flickr's REST endpoint via POST.
-		$this->req->setURL($this->REST);
-		$this->req->clearPostData();
 		if (substr($command,0,7) != "flickr.") {
 			$command = "flickr." . $command;
 		}
@@ -212,22 +242,24 @@ class phpFlickr {
 		if (!($this->response = $this->getCached($args)) || $nocache) {
 			foreach ($args as $key => $data) {
 				$auth_sig .= $key . $data;
-				$this->req->addPostData($key, $data);
 			}
 			if (!empty($this->secret)) {
 				$api_sig = md5($this->secret . $auth_sig);
-				$this->req->addPostData("api_sig", $api_sig);
+				$args['api_sig'] = $api_sig;
 			}
 
-			$this->req->addHeader("Connection", "Keep-Alive");
+			//$this->req->addHeader("Connection", "Keep-Alive");
 			
 			//Send Requests
+			/*
 			if ($this->req->sendRequest()) {
 				$this->response = $this->req->getResponseBody();
 				$this->cache($args, $this->response);
 			} else {
 				die("There has been a problem sending your command to the server.");
 			}
+			*/
+			$this->response = $this->post($args);
 		}
 		/*
 		 * Uncomment this line (and comment out the next one) if you're doing large queries
@@ -329,6 +361,7 @@ class phpFlickr {
 	}
 
 	function sync_upload ($photo, $title = null, $description = null, $tags = null, $is_public = null, $is_friend = null, $is_family = null) {
+		die('upload doesn\'t work yet!');
 		$upload_req =& new HTTP_Request();
 		$upload_req->setMethod(HTTP_REQUEST_METHOD_POST);
 
@@ -398,6 +431,7 @@ class phpFlickr {
 	}
 
 	function async_upload ($photo, $title = null, $description = null, $tags = null, $is_public = null, $is_friend = null, $is_family = null) {
+		die('upload doesn\'t work yet!');
 		$upload_req =& new HTTP_Request();
 		$upload_req->setMethod(HTTP_REQUEST_METHOD_POST);
 
@@ -467,6 +501,7 @@ class phpFlickr {
 
 	// Interface for new replace API method.
 	function replace ($photo, $photo_id, $async = null) {
+		die('upload doesn\'t work yet!');
 		$upload_req =& new HTTP_Request();
 		$upload_req->setMethod(HTTP_REQUEST_METHOD_POST);
 
