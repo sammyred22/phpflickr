@@ -37,7 +37,7 @@ class phpFlickr {
 	Var $error_msg;
 	var $token;
 	var $php_version;
-	var $custom_post = null;
+	var $custom_post = null, $custom_cache_get = null, $custom_cache_set = null;
 
 	/*
 	 * When your database cache table hits this many rows, a cleanup
@@ -121,6 +121,10 @@ class phpFlickr {
 					}
 				}
 			}
+		} elseif ( $type == 'custom' ) {
+			$this->cache = "custom";
+			$this->custom_cache_get = $connection[0];
+			$this->custom_cache_set = $connection[1];
 		}
 		$this->cache_expire = $cache_expire;
 	}
@@ -145,6 +149,8 @@ class phpFlickr {
 					return implode('', file($file));
 				}
 			}
+		} elseif ( $this->cache == 'custom' ) {
+			return call_user_func_array($this->custom_cache_get, array($reqhash));
 		}
 		return false;
 	}
@@ -168,6 +174,8 @@ class phpFlickr {
 			$result = fwrite($fstream,$response);
 			fclose($fstream);
 			return $result;
+		} elseif ( $this->cache == "custom" ) {
+			return call_user_func_array($this->custom_cache_set, array($reqhash, $response));
 		}
 		return false;
 	}
@@ -195,8 +203,10 @@ class phpFlickr {
 		$data = implode('&', $data);
 		
 		
-		$fp = pfsockopen($matches[1], 80);
-		if(!$fp) return null;
+		$fp = @pfsockopen($matches[1], 80);
+		if (!$fp) {
+			die('Could not connect to the web service');
+		}
 		fputs ($fp,'POST ' . $matches[2] . " HTTP/1.1\n");
 		fputs ($fp,'Host: ' . $matches[1] . "\n");
 		fputs ($fp,"Content-type: application/x-www-form-urlencoded\n");
@@ -209,6 +219,10 @@ class phpFlickr {
 		}
 		fclose ($fp);
 		$chunked = false;
+		$http_status = trim(substr($response, 0, strpos($response, "\n")));
+		if ( $http_status != 'HTTP/1.1 200 OK' ) {
+			die('The web service endpoint returned a "' . $http_status . '" response');
+		}
 		if ( strpos($response, 'Transfer-Encoding: chunked') !== false ) {
 			$temp = trim(strstr($response, "\r\n\r\n"));
 			$response = '';
@@ -260,6 +274,7 @@ class phpFlickr {
 			}
 			*/
 			$this->response = $this->post($args);
+			$this->cache($args, $this->response);
 		}
 		/*
 		 * Uncomment this line (and comment out the next one) if you're doing large queries
