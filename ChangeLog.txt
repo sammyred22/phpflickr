@@ -5,6 +5,11 @@ phpFlickr - Changelog
 Version 2.3.0
 -------------
 
+2008-12-17 Dan Coulter  <dancoulter@users.sourceforge.net>
+    * phpFlickr.php: Modified existing methods to match the
+		Flickr API documentation. This WILL break compatibility
+		on certain methods.  Also added new methods since the
+		last update.
 2008-11-26 Dan Coulter  <dancoulter@users.sourceforge.net>
     * phpFlickr.php: Added new methods to keep up to date
 		with the API.

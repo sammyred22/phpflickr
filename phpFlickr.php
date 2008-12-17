@@ -568,6 +568,9 @@ class phpFlickr {
 	*******************************/
 
 	function call ($method, $arguments) {
+		foreach ( $arguments as $key => $value ) {
+			if ( is_null($value) ) unset($arguments[$key]);
+		}
 		$this->request($method, $arguments);
 		return $this->parsed_response ? $this->parsed_response : false;
 	}
@@ -991,6 +994,16 @@ class phpFlickr {
 	}
 
 	/* Photos - Geo Methods */
+	function photos_geo_batchCorrectLocation ($lat, $lon, $accuracy, $place_id = NULL, $woe_id = NULL) {
+		/* http://www.flickr.com/services/api/flickr.photos.geo.batchCorrectLocation.html */
+		return $this->call('flickr.photos.geo.batchCorrectLocation', array('lat' => $lat, 'lon' => $lon, 'accuracy' => $accuracy, 'place_id' => $place_id, 'woe_id' => $woe_id));
+	}
+
+	function photos_geo_correctLocation ($photo_id, $place_id = NULL, $woe_id = NULL) {
+		/* http://www.flickr.com/services/api/flickr.photos.geo.correctLocation.html */
+		return $this->call('flickr.photos.geo.correctLocation', array('photo_id' => $photo_id, 'place_id' => $place_id, 'woe_id' => $woe_id));
+	}
+
 	function photos_geo_getLocation ($photo_id) {
 		/* http://www.flickr.com/services/api/flickr.photos.geo.getLocation.html */
 		$this->request("flickr.photos.geo.getLocation", array("photo_id"=>$photo_id));
@@ -1002,11 +1015,21 @@ class phpFlickr {
 		$this->request("flickr.photos.geo.getPerms", array("photo_id"=>$photo_id));
 		return $this->parsed_response ? $this->parsed_response['perms'] : false;
 	}
+	
+	function photos_geo_photosForLocation ($lat, $lon, $accuracy = NULL, $extras = NULL, $per_page = NULL, $page = NULL) {
+		/* http://www.flickr.com/services/api/flickr.photos.geo.photosForLocation.html */
+		return $this->call('flickr.photos.geo.photosForLocation', array('lat' => $lat, 'lon' => $lon, 'accuracy' => $accuracy, 'extras' => $extras, 'per_page' => $per_page, 'page' => $page));
+	}
 
 	function photos_geo_removeLocation ($photo_id) {
 		/* http://www.flickr.com/services/api/flickr.photos.geo.removeLocation.html */
 		$this->request("flickr.photos.geo.removeLocation", array("photo_id"=>$photo_id), TRUE);
 		return $this->parsed_response ? true : false;
+	}
+
+	function photos_geo_setContext ($photo_id, $context) {
+		/* http://www.flickr.com/services/api/flickr.photos.geo.setContext.html */
+		return $this->call('flickr.photos.geo.setContext', array('photo_id' => $photo_id, 'context' => $context));
 	}
 
 	function photos_geo_setLocation ($photo_id, $lat, $lon, $accuracy = NULL) {
@@ -1190,6 +1213,26 @@ class phpFlickr {
 		return $this->call('flickr.places.getInfoByUrl', array('url' => $url));
 	}
 	
+	function places_getPlaceTypes () {
+		/* http://www.flickr.com/services/api/flickr.places.getPlaceTypes.html */
+		return $this->call('flickr.places.getPlaceTypes', array());
+	}
+	
+	function places_placesForBoundingBox ($bbox, $place_type = NULL, $place_type_id = NULL) {
+		/* http://www.flickr.com/services/api/flickr.places.placesForBoundingBox.html */
+		return $this->call('flickr.places.placesForBoundingBox', array('bbox' => $bbox, 'place_type' => $place_type, 'place_type_id' => $place_type_id));
+	}
+
+	function places_placesForContacts ($place_type = NULL, $place_type_id = NULL, $woe_id = NULL, $place_id = NULL, $threshold = NULL, $contacts = NULL, $min_upload_date = NULL, $max_upload_date = NULL, $min_taken_date = NULL, $max_taken_date = NULL) {
+		/* http://www.flickr.com/services/api/flickr.places.placesForContacts.html */
+		return $this->call('flickr.places.placesForContacts', array('place_type' => $place_type, 'place_type_id' => $place_type_id, 'woe_id' => $woe_id, 'place_id' => $place_id, 'threshold' => $threshold, 'contacts' => $contacts, 'min_upload_date' => $min_upload_date, 'max_upload_date' => $max_upload_date, 'min_taken_date' => $min_taken_date, 'max_taken_date' => $max_taken_date));
+	}
+
+	function places_placesForTags ($place_type_id, $woe_id = NULL, $place_id = NULL, $threshold = NULL, $tags = NULL, $tag_mode = NULL, $machine_tags = NULL, $machine_tag_mode = NULL, $min_upload_date = NULL, $max_upload_date = NULL, $min_taken_date = NULL, $max_taken_date = NULL) {
+		/* http://www.flickr.com/services/api/flickr.places.placesForTags.html */
+		return $this->call('flickr.places.placesForTags', array('place_type_id' => $place_type_id, 'woe_id' => $woe_id, 'place_id' => $place_id, 'threshold' => $threshold, 'tags' => $tags, 'tag_mode' => $tag_mode, 'machine_tags' => $machine_tags, 'machine_tag_mode' => $machine_tag_mode, 'min_upload_date' => $min_upload_date, 'max_upload_date' => $max_upload_date, 'min_taken_date' => $min_taken_date, 'max_taken_date' => $max_taken_date));
+	}
+
 	function places_placesForUser ($place_type_id = NULL, $place_type = NULL, $woe_id = NULL, $place_id = NULL, $threshold = NULL, $min_upload_date = NULL, $max_upload_date = NULL, $min_taken_date = NULL, $max_taken_date = NULL) {
 		/* http://www.flickr.com/services/api/flickr.places.placesForUser.html */
 		return $this->call('flickr.places.placesForUser', array('place_type_id' => $place_type_id, 'place_type' => $place_type, 'woe_id' => $woe_id, 'place_id' => $place_id, 'threshold' => $threshold, 'min_upload_date' => $min_upload_date, 'max_upload_date' => $max_upload_date, 'min_taken_date' => $min_taken_date, 'max_taken_date' => $max_taken_date));
