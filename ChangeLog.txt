@@ -2,6 +2,13 @@
 phpFlickr - Changelog
 ---------------------
 
+Version 2.3.0.1
+-------------
+
+2008-12-17 Dan Coulter  <dancoulter@users.sourceforge.net>
+	* Changed some links in the documentation to remove 
+		references to SourceForge and link to Google Code
+
 Version 2.3.0
 -------------
 
