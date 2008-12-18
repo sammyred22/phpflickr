@@ -6,6 +6,22 @@ Version 2.3.0
 -------------
 
 2008-12-17 Dan Coulter  <dancoulter@users.sourceforge.net>
+	* Note: The following methods have had either their input
+		parameters or their output (or both) changed because
+		of changes in the Flickr API.  If you use any of them
+		in your app, be sure to check for compatibility.
+			favorites_getList
+			favorites_getPublicList
+			groups_getInfo
+			people_getPublicPhotos
+			photos_getNotInSet
+			photos_getUntagged
+			photos_recentlyUpdated
+			photos_setSafetyLevel
+			photos_comments_getList
+			photos_geo_setPerms
+			photosets_getPhotos
+			tags_getListUserRaw
     * phpFlickr.php: Modified existing methods to match the
 		Flickr API documentation. This WILL break compatibility
 		on certain methods.  Also added new methods since the
