@@ -1,4 +1,4 @@
-<?
+<?php
     /* Last updated with phpFlickr 1.3.1
      *
      * Edit these variables to reflect the values you need. $default_redirect 
