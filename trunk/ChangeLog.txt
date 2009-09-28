@@ -2,6 +2,13 @@
 phpFlickr - Changelog
 ---------------------
 
+Version 2.3.1
+-------------
+
+2008-09-28 Dan Coulter  <dancoulter@users.sourceforge.net>
+    * phpFlickr.php: Added new methods to keep up to date
+		with the API.
+
 Version 2.3.0.1
 -------------
 
