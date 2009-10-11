@@ -1,5 +1,5 @@
 <?php
-/* phpFlickr Class 2.3.1
+/* phpFlickr Class 2.3.1.1
  * Written by Dan Coulter (dan@dancoulter.com)
  * Project Home Page: http://phpflickr.com/
  * Released under GNU Lesser General Public License (http://www.gnu.org/copyleft/lgpl.html)
@@ -534,14 +534,19 @@ class phpFlickr {
 		// redirect to its default page.
 
 		if (empty($_SESSION['phpFlickr_auth_token']) && empty($this->token)) {
-			if ($remember_uri) {
-				$redirect = $_SERVER['REQUEST_URI'];
+			if ( $remember_uri === true ) {
+				session_register('phpFlickr_auth_redirect');
+				$_SESSION['phpFlickr_auth_redirect'] = $_SERVER['REQUEST_URI'];
+			} elseif ( $remember_uri !== false ) {
+				session_register('phpFlickr_auth_redirect');
+				$_SESSION['phpFlickr_auth_redirect'] = $remember_uri;
 			}
-			$api_sig = md5($this->secret . "api_key" . $this->api_key . "extra" . $redirect . "perms" . $perms);
+			$api_sig = md5($this->secret . "api_key" . $this->api_key . "perms" . $perms);
+			
 			if ($this->service == "23") {
-				header("Location: http://www.23hq.com/services/auth/?api_key=" . $this->api_key . "&extra=" . $redirect . "&perms=" . $perms . "&api_sig=". $api_sig);
+				header("Location: http://www.23hq.com/services/auth/?api_key=" . $this->api_key . "&perms=" . $perms . "&api_sig=". $api_sig);
 			} else {
-				header("Location: http://www.flickr.com/services/auth/?api_key=" . $this->api_key . "&extra=" . $redirect . "&perms=" . $perms . "&api_sig=". $api_sig);
+				header("Location: http://www.flickr.com/services/auth/?api_key=" . $this->api_key . "&perms=" . $perms . "&api_sig=". $api_sig);
 			}
 			exit;
 		} else {
