@@ -1,4 +1,4 @@
-phpFlickr Class 2.3.1
+phpFlickr Class 2.3.1.1
 Written by Dan Coulter (dancoulter@users.sourceforge.net)
 Project Homepage: http://www.phpflickr.com/
 Google Code Project Page: http://code.google.com/p/phpflickr/
